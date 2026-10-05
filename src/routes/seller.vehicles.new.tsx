@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -106,6 +106,34 @@ function AddVehicleWizard() {
   // Step 3: Photos
   const [selectedPhoto, setSelectedPhoto] = useState(DEMO_PRESET.photos[0] ?? "");
   const [customPhotoInput, setCustomPhotoInput] = useState("");
+  const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilesSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newPhotos: { id: string; url: string; name: string }[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file && file.type.startsWith("image/")) {
+        const url = URL.createObjectURL(file);
+        newPhotos.push({
+          id: `local-${Date.now()}-${i}`,
+          url,
+          name: file.name,
+        });
+      }
+    }
+    if (newPhotos.length > 0) {
+      setUploadedPhotos((prev) => [...prev, ...newPhotos]);
+      const firstUrl = newPhotos[0]?.url;
+      if (firstUrl) {
+        setSelectedPhoto(firstUrl);
+      }
+      toast.success(`Loaded ${newPhotos.length} photo${newPhotos.length > 1 ? "s" : ""} from your device`);
+    }
+    e.target.value = "";
+  };
 
   // Step 4: Financing terms
   const [askingPriceDollars, setAskingPriceDollars] = useState(21000);
@@ -160,6 +188,7 @@ function AddVehicleWizard() {
     setApr(9);
     setSelectedTerms([36, 48, 60]);
     setSelectedPhoto(DEMO_PRESET.photos[0] ?? "");
+    setUploadedPhotos([]);
     setCity("Phoenix");
     setState("AZ");
     toast.success("Loaded demo vehicle: 2021 Toyota Camry SE");
@@ -186,7 +215,10 @@ function AddVehicleWizard() {
       allowed_terms: selectedTerms,
       market_low_cents: Math.round(priceCents * 0.94),
       market_high_cents: Math.round(priceCents * 1.08),
-      photos: [selectedPhoto || (DEMO_PRESET.photos[0] ?? "")],
+      photos: [
+        selectedPhoto || (DEMO_PRESET.photos[0] ?? ""),
+        ...uploadedPhotos.map((p) => p.url).filter((u) => u !== selectedPhoto),
+      ],
       features: selectedFeatures,
       history_summary: { owners: 1, accidents: 0, title: "clean" },
     });
@@ -456,7 +488,7 @@ function AddVehicleWizard() {
               <div>
                 <h2 className="text-xl font-bold text-ink">Step 3: Vehicle photos</h2>
                 <p className="text-sm text-muted-foreground">
-                  Select a photo preset or enter a direct image URL. High quality photos attract more verified buyers.
+                  Upload photos directly from your device or choose from presets. High quality photos attract more verified buyers.
                 </p>
               </div>
 
@@ -483,8 +515,76 @@ function AddVehicleWizard() {
                 </div>
 
                 <div className="space-y-4">
+                  {/* Upload Photos Section */}
+                  <div className="rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 p-5 text-center transition-colors hover:border-primary/50">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFilesSelected}
+                    />
+                    <UploadCloud className="mx-auto size-8 text-primary opacity-80" />
+                    <p className="mt-2 text-sm font-semibold text-ink">Upload photos from device</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      PNG, JPG, WebP supported · Select one or multiple images
+                    </p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="mt-3 inline-flex items-center gap-1.5"
+                    >
+                      <UploadCloud className="size-4" /> Upload photos
+                    </Button>
+                  </div>
+
+                  {/* Uploaded Thumbnails Preview Gallery */}
+                  {uploadedPhotos.length > 0 && (
+                    <div className="space-y-2 rounded-xl border border-border bg-surface p-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-ink">
+                          Selected photos ({uploadedPhotos.length})
+                        </label>
+                        <span className="text-[11px] text-muted-foreground">Click thumbnail to set as Primary</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {uploadedPhotos.map((p) => {
+                          const isPrimary = selectedPhoto === p.url;
+                          return (
+                            <button
+                              type="button"
+                              key={p.id}
+                              onClick={() => {
+                                setSelectedPhoto(p.url);
+                                toast.success("Marked as primary photo");
+                              }}
+                              className={`group relative aspect-[4/3] overflow-hidden rounded-xl border-2 transition-all ${
+                                isPrimary
+                                  ? "border-primary ring-2 ring-primary/30 shadow-sm"
+                                  : "border-border hover:border-muted-foreground/40"
+                              }`}
+                            >
+                              <img src={p.url} alt={p.name} className="h-full w-full object-cover" />
+                              {isPrimary && (
+                                <span className="absolute top-1 right-1 rounded-md bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground shadow">
+                                  Primary
+                                </span>
+                              )}
+                              <span className="absolute bottom-0 inset-x-0 bg-ink/75 py-0.5 text-[9px] text-primary-foreground truncate px-1 text-center font-medium">
+                                {p.name}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sample Presets */}
                   <div>
-                    <label className="text-xs font-medium text-ink">Choose from presets</label>
+                    <label className="text-xs font-medium text-ink">Or choose from sample presets</label>
                     <div className="mt-2 grid grid-cols-2 gap-2">
                       {SAMPLE_PHOTO_PRESETS.map((p) => {
                         const active = selectedPhoto === p.url;
@@ -507,7 +607,8 @@ function AddVehicleWizard() {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 pt-2">
+                  {/* Custom URL Input */}
+                  <div className="space-y-1.5 pt-1">
                     <label className="text-xs font-medium text-ink">Or enter custom image URL</label>
                     <div className="flex gap-2">
                       <Input
@@ -530,13 +631,6 @@ function AddVehicleWizard() {
                         Apply
                       </Button>
                     </div>
-                  </div>
-
-                  <div className="rounded-xl border border-dashed border-border bg-surface p-4 text-center">
-                    <UploadCloud className="mx-auto size-6 text-muted-foreground opacity-60" />
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Photo drag-and-drop simulated for demo environment
-                    </p>
                   </div>
                 </div>
               </div>
