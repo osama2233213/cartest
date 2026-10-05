@@ -1,20 +1,29 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Eye } from "lucide-react";
+import { Eye, LogOut } from "lucide-react";
 import { Logo } from "@/components/site/SiteChrome";
 import { PERSONAS, STAGE_LABEL, type Role, type Stage } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
 import { RotateCcw } from "lucide-react";
 import { useDemoStore } from "@/lib/demo-store";
+import { useAuth } from "@/lib/auth-store";
 import { toast } from "sonner";
 
 export function DemoBar({ role }: { role: Role }) {
   const { resetDemo } = useDemoStore();
+  const { login, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleReset = () => {
     resetDemo();
     toast.success("Demo state reset to initial seed data");
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/" });
+    toast.success("Logged out");
   };
 
   return (
@@ -25,6 +34,7 @@ export function DemoBar({ role }: { role: Role }) {
         <Link
           key={r}
           to={r === "seller" ? "/seller" : r === "buyer" ? "/buyer" : "/admin"}
+          onClick={() => login(r)}
           className={cn(
             "rounded-full px-3 py-1 font-semibold transition-colors",
             r === role ? "bg-primary" : "bg-primary-foreground/10 hover:bg-primary-foreground/20",
@@ -41,6 +51,14 @@ export function DemoBar({ role }: { role: Role }) {
       >
         <RotateCcw className="size-3" />
         Reset demo
+      </button>
+      <button
+        onClick={handleLogout}
+        title="Log out and return to the landing page"
+        className="flex items-center gap-1 rounded-full bg-primary-foreground/10 px-2.5 py-1 text-[11px] font-medium text-primary-foreground/80 hover:bg-primary-foreground/20 hover:text-primary-foreground transition-colors"
+      >
+        <LogOut className="size-3" />
+        Log out
       </button>
     </div>
   );

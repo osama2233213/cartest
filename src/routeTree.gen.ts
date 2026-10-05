@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BuyerRouteImport } from './routes/buyer'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as SellerRouteImport } from './routes/seller'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsIdRouteImport } from './routes/cars.$id'
@@ -32,6 +33,11 @@ const AdminRoute = AdminRouteImport.update({
 const BuyerRoute = BuyerRouteImport.update({
   id: '/buyer',
   path: '/buyer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellerRoute = SellerRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/buyer': typeof BuyerRoute
+  '/login': typeof LoginRoute
   '/seller': typeof SellerRouteWithChildren
   '/cars/$id': typeof CarsIdRoute
   '/deals/$id': typeof DealsIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/buyer': typeof BuyerRoute
+  '/login': typeof LoginRoute
   '/cars/$id': typeof CarsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/cars': typeof CarsIndexRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/buyer': typeof BuyerRoute
+  '/login': typeof LoginRoute
   '/seller': typeof SellerRouteWithChildren
   '/cars/$id': typeof CarsIdRoute
   '/deals/$id': typeof DealsIdRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/buyer'
+    | '/login'
     | '/seller'
     | '/cars/$id'
     | '/deals/$id'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/buyer'
+    | '/login'
     | '/cars/$id'
     | '/deals/$id'
     | '/cars'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/buyer'
+    | '/login'
     | '/seller'
     | '/cars/$id'
     | '/deals/$id'
@@ -137,6 +149,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   BuyerRoute: typeof BuyerRoute
+  LoginRoute: typeof LoginRoute
   SellerRoute: typeof SellerRouteWithChildren
   CarsIdRoute: typeof CarsIdRoute
   DealsIdRoute: typeof DealsIdRoute
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer'
       fullPath: '/buyer'
       preLoaderRoute: typeof BuyerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seller': {
@@ -228,6 +248,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   BuyerRoute: BuyerRoute,
+  LoginRoute: LoginRoute,
   SellerRoute: SellerRouteWithChildren,
   CarsIdRoute: CarsIdRoute,
   DealsIdRoute: DealsIdRoute,

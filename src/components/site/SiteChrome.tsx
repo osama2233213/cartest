@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { ShieldCheck } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState, useRef, useEffect } from "react";
+import { ShieldCheck, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-store";
+import { cn } from "@/lib/utils";
 
 export function Logo() {
   return (
@@ -13,7 +16,80 @@ export function Logo() {
   );
 }
 
+function UserMenu() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  if (!user) return null;
+
+  const dest = user.role === "seller" ? "/seller" : user.role === "buyer" ? "/buyer" : "/admin";
+
+  const handleLogout = () => {
+    setOpen(false);
+    logout();
+    navigate({ to: "/" });
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5 text-sm transition-colors hover:bg-surface"
+      >
+        <div className="grid size-7 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+          {user.avatar}
+        </div>
+        <span className="hidden font-medium text-ink sm:inline">{user.name}</span>
+        <ChevronDown className={cn("size-3.5 text-muted-foreground transition-transform", open && "rotate-180")} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-56 animate-in fade-in slide-in-from-top-2 rounded-xl border border-border bg-card p-1.5 shadow-xl">
+          <div className="border-b border-border px-3 py-2.5">
+            <p className="text-sm font-semibold text-ink">{user.name}</p>
+            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+              {user.label}
+            </span>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={() => {
+                setOpen(false);
+                navigate({ to: dest });
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-ink transition-colors hover:bg-surface"
+            >
+              <LayoutDashboard className="size-4 text-muted-foreground" />
+              {user.label} Dashboard
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-danger transition-colors hover:bg-danger/5"
+            >
+              <LogOut className="size-4" />
+              Log out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function SiteHeader() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -27,9 +103,13 @@ export function SiteHeader() {
           <a href="/#faq" className="hover:text-ink">FAQ</a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" disabled title="Accounts arrive in the next build step">
-            Log in
-          </Button>
+          {isLoggedIn ? (
+            <UserMenu />
+          ) : (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/login">Log in</Link>
+            </Button>
+          )}
           <Button size="sm" asChild>
             <Link to="/cars">Find a car</Link>
           </Button>
