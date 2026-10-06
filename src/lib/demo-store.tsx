@@ -196,6 +196,8 @@ interface DemoStoreContextValue {
   confirmTestDrive: (dealId: string) => void;
   completeTestDrive: (dealId: string) => void;
   approveOffer: (dealId: string) => void;
+  declineDeal: (dealId: string, reason: string) => void;
+  withdrawDeal: (dealId: string, reason?: string | undefined) => void;
   submitCounterOffer: (dealId: string, terms: { priceCents: number; downPct: number; apr: number; term: number }, by: "seller" | "buyer", note?: string | undefined) => void;
   acceptCounterOffer: (dealId: string) => void;
   acceptInspection: (dealId: string) => void;
@@ -277,6 +279,9 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       downPct: vehicle.min_down_pct,
       apr: vehicle.apr,
       term: primaryTerm,
+      state: vehicle.state || "AZ",
+      minDownPct: vehicle.min_down_pct || 15,
+      allowedTerms: vehicle.allowed_terms || [36, 48, 60],
       updated: "Just now",
     };
 
@@ -343,6 +348,9 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       downPct: vehicle.min_down_pct,
       apr: vehicle.apr,
       term: primaryTerm,
+      state: vehicle.state || "AZ",
+      minDownPct: vehicle.min_down_pct || 15,
+      allowedTerms: vehicle.allowed_terms || [36, 48, 60],
       updated: "Just now",
     };
 
@@ -426,6 +434,9 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
                   downPct: terms.downPct,
                   apr: terms.apr,
                   term: terms.term,
+                  state: d.state || vehicle.state || "AZ",
+                  minDownPct: vehicle.min_down_pct || 15,
+                  allowedTerms: vehicle.allowed_terms || [36, 48, 60],
                   updated: "Just now",
                 }
               : d
@@ -447,6 +458,9 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       downPct: terms.downPct,
       apr: terms.apr,
       term: terms.term,
+      state: vehicle.state || "AZ",
+      minDownPct: vehicle.min_down_pct || 15,
+      allowedTerms: vehicle.allowed_terms || [36, 48, 60],
       updated: "Just now",
     };
 
@@ -568,6 +582,61 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       return {
         ...prev,
         deals: prev.deals.map((d) => (d.id === dealId ? { ...d, stage: "inspection" as Stage, updated: "Just now" } : d)),
+        dealDetails: {
+          ...prev.dealDetails,
+          [dealId]: updatedDetail,
+        },
+      };
+    });
+  };
+
+  const declineDeal = (dealId: string, reason: string) => {
+    setState((prev) => {
+      const cur = ensureDealDetail(prev.dealDetails, dealId);
+      const updatedDetail: DealDetailData = {
+        ...cur,
+        messages: [
+          ...cur.messages,
+          {
+            id: "m-" + Date.now(),
+            sender: "seller",
+            senderName: PERSONAS.seller.name,
+            text: `Application declined by seller. Reason: ${reason}`,
+            time: "Just now",
+          },
+        ],
+      };
+      return {
+        ...prev,
+        deals: prev.deals.map((d) => (d.id === dealId ? { ...d, stage: "declined" as Stage, updated: "Just now" } : d)),
+        dealDetails: {
+          ...prev.dealDetails,
+          [dealId]: updatedDetail,
+        },
+      };
+    });
+  };
+
+  const withdrawDeal = (dealId: string, reason?: string | undefined) => {
+    setState((prev) => {
+      const cur = ensureDealDetail(prev.dealDetails, dealId);
+      const noteText = reason?.trim() ? ` Reason: ${reason.trim()}` : "";
+      const updatedDetail: DealDetailData = {
+        ...cur,
+        messages: [
+          ...cur.messages,
+          {
+            id: "m-" + Date.now(),
+            sender: "buyer",
+            senderName: PERSONAS.buyer.name,
+            text: `Offer withdrawn by buyer.${noteText}`,
+            time: "Just now",
+          },
+        ],
+      };
+      return {
+        ...prev,
+        deals: prev.deals.map((d) => (d.id === dealId ? { ...d, stage: "cancelled" as Stage, updated: "Just now" } : d)),
         dealDetails: {
           ...prev.dealDetails,
           [dealId]: updatedDetail,
@@ -905,6 +974,8 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       confirmTestDrive,
       completeTestDrive,
       approveOffer,
+      declineDeal,
+      withdrawDeal,
       submitCounterOffer,
       acceptCounterOffer,
       acceptInspection,

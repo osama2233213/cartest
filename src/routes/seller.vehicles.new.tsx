@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useDemoStore } from "@/lib/demo-store";
-import { dealTerms, fmtUsd } from "@/lib/finance";
+import { dealTerms, fmtUsd, rateCapForState } from "@/lib/finance";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/seller/vehicles/new")({
@@ -140,6 +140,14 @@ function AddVehicleWizard() {
   const [minDownPct, setMinDownPct] = useState(15);
   const [apr, setApr] = useState(9);
   const [selectedTerms, setSelectedTerms] = useState<number[]>([36, 48, 60]);
+
+  const maxAprForState = rateCapForState(state);
+
+  const handleStateChange = (newState: string) => {
+    setState(newState);
+    const cap = rateCapForState(newState);
+    setApr((prev) => Math.min(prev, cap));
+  };
 
   // Live financing calculations
   const priceCents = askingPriceDollars * 100;
@@ -397,7 +405,7 @@ function AddVehicleWizard() {
                   <label className="text-xs font-medium text-ink">State</label>
                   <select
                     value={state}
-                    onChange={(e) => setState(e.target.value)}
+                    onChange={(e) => handleStateChange(e.target.value)}
                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <option value="AZ">Arizona (AZ · Max APR 10%)</option>
@@ -678,11 +686,11 @@ function AddVehicleWizard() {
                     <Slider
                       value={[minDownPct]}
                       min={10}
-                      max={40}
+                      max={30}
                       step={1}
-                      onValueChange={(v) => setMinDownPct(v[0] ?? 15)}
+                      onValueChange={(v) => setMinDownPct(Math.min(30, Math.max(10, v[0] ?? 15)))}
                     />
-                    <p className="text-xs text-muted-foreground">Recommended: 15%–20% to reduce seller default risk.</p>
+                    <p className="text-xs text-muted-foreground">Recommended: 15%–20% to reduce seller default risk (Max allowed: 30%).</p>
                   </div>
 
                   <div className="space-y-2">
@@ -693,13 +701,13 @@ function AddVehicleWizard() {
                     <Slider
                       value={[apr]}
                       min={5}
-                      max={10} // AZ cap is 10%
+                      max={maxAprForState}
                       step={0.5}
-                      onValueChange={(v) => setApr(v[0] ?? 9)}
+                      onValueChange={(v) => setApr(Math.min(maxAprForState, Math.max(5, v[0] ?? 9)))}
                     />
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>Min: 5.0%</span>
-                      <span className="font-medium text-warning">Arizona legal max cap: 10.0% APR</span>
+                      <span className="font-medium text-warning">{state} legal max cap: {maxAprForState.toFixed(1)}% APR</span>
                     </div>
                   </div>
 

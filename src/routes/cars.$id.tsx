@@ -29,7 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getPublicVehicle, type PublicVehicle } from "@/lib/vehicles.functions";
-import { dealTerms, fmtUsd, marketPosition } from "@/lib/finance";
+import { dealTerms, fmtUsd, marketPosition, rateCapForState } from "@/lib/finance";
 import { useDemoStore } from "@/lib/demo-store";
 import { toast } from "sonner";
 
@@ -165,13 +165,32 @@ function CarPage() {
   const h = v.history_summary;
 
   // Live calculation for offer dialog
-  const offerPriceCents = offerPriceDollars * 100;
+  const offerPriceCents = (Number(offerPriceDollars) || 0) * 100;
+  const minRequiredDown = Number(v.min_down_pct) || 10;
+  const stateCap = rateCapForState(v.state || "AZ");
+  const isDownTooLow = offerDownPct < minRequiredDown;
+  const isTermInvalid = !v.allowed_terms.includes(offerTerm);
+  const isAprTooHigh = Number(v.apr) > stateCap;
+  const isPriceInvalid = !offerPriceDollars || offerPriceDollars <= 0;
+
+  const offerValidationError = isPriceInvalid
+    ? "Please enter a valid purchase price."
+    : isDownTooLow
+      ? `Down payment cannot be below seller's minimum required ${minRequiredDown}%.`
+      : isTermInvalid
+        ? "Please select one of the seller's allowed loan terms."
+        : isAprTooHigh
+          ? `Seller rate (${v.apr}% APR) exceeds ${v.state} state usury cap of ${stateCap}%.`
+          : null;
+
+  const isOfferValid = !offerValidationError;
+
   const offerCalc = useMemo(() => {
     return dealTerms({
-      priceCents: offerPriceCents,
-      downPct: offerDownPct,
+      priceCents: Math.max(0, offerPriceCents),
+      downPct: Math.min(100, Math.max(0, offerDownPct)),
       apr: Number(v.apr),
-      termMonths: offerTerm,
+      termMonths: offerTerm || 36,
     });
   }, [offerPriceCents, offerDownPct, v.apr, offerTerm]);
 
@@ -198,6 +217,10 @@ function CarPage() {
   };
 
   const handleMakeOffer = () => {
+    if (!isOfferValid) {
+      toast.error(offerValidationError || "Invalid offer terms");
+      return;
+    }
     const dealId = makeOffer(v, {
       priceCents: offerPriceCents,
       downPct: offerDownPct,
@@ -494,7 +517,7 @@ function CarPage() {
               <Slider
                 value={[offerDownPct]}
                 min={Number(v.min_down_pct) || 10}
-                max={45}
+                max={80}
                 step={1}
                 onValueChange={(val) => setOfferDownPct(val[0] ?? 15)}
               />
@@ -536,12 +559,18 @@ function CarPage() {
                 <div>OwnerFi fee for you: <span className="font-semibold text-success">$0 (Free)</span></div>
               </div>
             </div>
+
+            {offerValidationError && (
+              <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-xs font-medium text-destructive">
+                {offerValidationError}
+              </div>
+            )}
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="ghost" onClick={() => setOfferOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleMakeOffer} className="flex items-center gap-1.5">
+            <Button onClick={handleMakeOffer} disabled={!isOfferValid} className="flex items-center gap-1.5">
               <Sparkles className="size-4" /> Submit offer & open deal
             </Button>
           </DialogFooter>

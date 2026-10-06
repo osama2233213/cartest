@@ -26,6 +26,7 @@ import {
   Sparkles,
   UserCheck,
   Wrench,
+  XCircle,
 } from "lucide-react";
 import { AppShell, StageChip } from "@/components/app/AppShell";
 import { CarPhoto } from "@/components/site/CarPhoto";
@@ -51,7 +52,7 @@ import {
   type Stage,
   PERSONAS,
 } from "@/lib/demo-data";
-import { dealTerms, fmtUsd } from "@/lib/finance";
+import { dealTerms, fmtUsd, rateCapForState } from "@/lib/finance";
 import { cn } from "@/lib/utils";
 import { useDemoStore, type DealDetailData } from "@/lib/demo-store";
 import { toast } from "sonner";
@@ -136,6 +137,8 @@ function DealRoom() {
     confirmTestDrive,
     completeTestDrive,
     approveOffer,
+    declineDeal,
+    withdrawDeal,
     submitCounterOffer,
     acceptCounterOffer,
     acceptInspection,
@@ -150,6 +153,11 @@ function DealRoom() {
   const t = termsFor(d);
   const role = currentRole as Role;
 
+  const dealState = d.state || "AZ";
+  const maxAprForDeal = rateCapForState(dealState);
+  const dealMinDown = d.minDownPct ?? 10;
+  const dealAllowedTerms = d.allowedTerms && d.allowedTerms.length > 0 ? d.allowedTerms : [24, 36, 48, 60];
+
   // Counter-offer modal state
   const [counterOpen, setCounterOpen] = useState(false);
   const [counterPriceDollars, setCounterPriceDollars] = useState(Math.round(d.priceCents / 100));
@@ -157,6 +165,15 @@ function DealRoom() {
   const [counterApr, setCounterApr] = useState(d.apr);
   const [counterTerm, setCounterTerm] = useState(d.term);
   const [counterNote, setCounterNote] = useState("We can meet in the middle at these terms.");
+
+  // Decline modal state (Seller)
+  const [declineOpen, setDeclineOpen] = useState(false);
+  const [declinePreset, setDeclinePreset] = useState("Proposed down payment is insufficient");
+  const [declineNote, setDeclineNote] = useState("");
+
+  // Withdraw modal state (Buyer)
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [withdrawNote, setWithdrawNote] = useState("");
 
   // Chat message input state
   const [newMsg, setNewMsg] = useState("");
@@ -171,13 +188,28 @@ function DealRoom() {
   // Dynamic Who goes next calculation
   const nextInfo = getDynamicNextAction(d, detail, role);
 
-  // Counter calculation preview
+  // Counter calculation preview & validation
   const counterCalc = dealTerms({
-    priceCents: counterPriceDollars * 100,
-    downPct: counterDownPct,
+    priceCents: Math.max(0, counterPriceDollars * 100),
+    downPct: Math.min(100, Math.max(0, counterDownPct)),
     apr: counterApr,
-    termMonths: counterTerm,
+    termMonths: counterTerm || 36,
   });
+
+  const isCounterDownInvalid = counterDownPct < dealMinDown || counterDownPct > 30;
+  const isCounterAprInvalid = counterApr > maxAprForDeal;
+  const isCounterPriceInvalid = !counterPriceDollars || counterPriceDollars <= 0;
+  const isCounterTermInvalid = !dealAllowedTerms.includes(counterTerm);
+  const counterValidationError = isCounterPriceInvalid
+    ? "Please enter a valid price."
+    : isCounterDownInvalid
+      ? `Down payment must be between ${dealMinDown}% and 30%.`
+      : isCounterAprInvalid
+        ? `APR exceeds ${dealState} maximum allowed cap of ${maxAprForDeal}%.`
+        : isCounterTermInvalid
+          ? "Please select a valid financing term."
+          : null;
+  const isCounterValid = !counterValidationError;
 
   const handleSendChat = () => {
     if (!newMsg.trim()) return;
@@ -193,6 +225,10 @@ function DealRoom() {
   };
 
   const handleCounterSubmit = () => {
+    if (!isCounterValid) {
+      toast.error(counterValidationError || "Invalid counter terms");
+      return;
+    }
     submitCounterOffer(
       d.id,
       {
@@ -206,6 +242,25 @@ function DealRoom() {
     );
     setCounterOpen(false);
     toast.success("Counter-offer sent successfully!");
+  };
+
+  const handleDeclineSubmit = () => {
+    const fullReason = declineNote.trim()
+      ? `${declinePreset}: ${declineNote.trim()}`
+      : declinePreset;
+    declineDeal(d.id, fullReason);
+    setDeclineOpen(false);
+    toast.error("Application declined", {
+      description: "Deal marked as declined.",
+    });
+  };
+
+  const handleWithdrawSubmit = () => {
+    withdrawDeal(d.id, withdrawNote.trim() || undefined);
+    setWithdrawOpen(false);
+    toast.info("Offer withdrawn", {
+      description: "Deal marked as cancelled.",
+    });
   };
 
   const handleAcceptCounter = () => {
@@ -343,7 +398,7 @@ function DealRoom() {
                 <h2 className="text-2xl font-bold text-ink mt-0.5">{STAGE_LABEL[d.stage]}</h2>
               </div>
               <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
-                Step {idx + 1} of 10
+                {idx >= 0 ? `Step ${idx + 1} of 10` : STAGE_LABEL[d.stage]}
               </span>
             </div>
 
@@ -491,6 +546,9 @@ function DealRoom() {
                       <Button variant="outline" onClick={() => setCounterOpen(true)} className="flex items-center gap-1.5">
                         <DollarSign className="size-4" /> Make counter-offer
                       </Button>
+                      <Button variant="outline" onClick={() => setDeclineOpen(true)} className="text-destructive hover:bg-destructive/10 border-destructive/30 flex items-center gap-1.5">
+                        <XCircle className="size-4" /> Decline
+                      </Button>
                     </>
                   ) : (
                     <>
@@ -502,13 +560,21 @@ function DealRoom() {
                           <Button variant="outline" onClick={() => setCounterOpen(true)}>
                             Counter back
                           </Button>
+                          <Button variant="ghost" onClick={() => setWithdrawOpen(true)} className="text-destructive hover:bg-destructive/10 flex items-center gap-1.5">
+                            <XCircle className="size-4" /> Withdraw
+                          </Button>
                         </>
                       ) : (
                         <div className="rounded-xl bg-surface p-4 text-xs text-muted-foreground border border-border flex items-center justify-between w-full">
-                          <span>Your application is in review by Maria. Switch to Seller to approve or counter.</span>
-                          <Button size="sm" onClick={() => navigate({ to: "/deals/$id", params: { id: d.id }, search: { as: "seller" } })}>
-                            Switch to Maria
-                          </Button>
+                          <span>Your application is in review by Maria. Switch to Seller to approve, counter, or decline.</span>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => setWithdrawOpen(true)} className="text-destructive hover:bg-destructive/10">
+                              Withdraw
+                            </Button>
+                            <Button size="sm" onClick={() => navigate({ to: "/deals/$id", params: { id: d.id }, search: { as: "seller" } })}>
+                              Switch to Maria
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </>
@@ -686,28 +752,50 @@ function DealRoom() {
             {/* STAGE 7: DOWN PAYMENT */}
             {d.stage === "down_payment" && (
               <div className="mt-5 space-y-5">
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-3">
+                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-primary">Down Payment Escrow</span>
                     <span className="text-xs font-semibold text-success flex items-center gap-1">
-                      <ShieldCheck className="size-4" /> Simulated Escrow (POC)
+                      <ShieldCheck className="size-4" /> Secure Escrow
                     </span>
                   </div>
 
-                  <div className="space-y-2 border-t border-primary/10 pt-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Down payment due from buyer:</span>
-                      <span className="money text-2xl font-bold text-ink">{fmtUsd(t.down)}</span>
+                  {role === "buyer" ? (
+                    <div className="space-y-3 border-t border-primary/10 pt-3 text-sm">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-muted-foreground font-medium">Down payment due from buyer:</span>
+                        <span className="money text-2xl font-bold text-ink">{fmtUsd(t.down)}</span>
+                      </div>
+
+                      {/* Required Phase-1 Money Model & Refund Note */}
+                      <div className="rounded-xl bg-background/80 p-3.5 border border-primary/15 space-y-2.5 text-xs">
+                        <p className="font-medium text-ink leading-relaxed">
+                          You pay <strong className="text-primary font-bold">{fmtUsd(t.down)}</strong>.{" "}
+                          <strong className="text-ink font-bold">{fmtUsd(t.sellerNet)}</strong> goes to the seller.{" "}
+                          OwnerFi’s <strong className="text-ink font-bold">{fmtUsd(t.fee)}</strong> fee is paid by the seller — no OwnerFi fee for you.
+                        </p>
+                        <div className="flex items-center gap-1.5 text-success font-semibold pt-2 border-t border-border">
+                          <ShieldCheck className="size-4 shrink-0 text-success" />
+                          <span>Fully refunded if the deal doesn’t close.</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">OwnerFi software fee (seller pays):</span>
-                      <span className="money font-semibold text-muted-foreground">−{fmtUsd(t.fee)}</span>
+                  ) : (
+                    <div className="space-y-2 border-t border-primary/10 pt-3 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Down payment received:</span>
+                        <span className="money text-2xl font-bold text-ink">{fmtUsd(t.down)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">OwnerFi fee (seller pays):</span>
+                        <span className="money font-semibold text-muted-foreground">−{fmtUsd(t.fee)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs pt-1 border-t border-primary/10">
+                        <span className="font-semibold text-ink">Net seller amount at closing:</span>
+                        <span className="money font-bold text-success text-base">{fmtUsd(t.sellerNet)}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-xs pt-1 border-t border-primary/10">
-                      <span className="font-semibold text-ink">Net seller proceeds at closing:</span>
-                      <span className="money font-bold text-success text-base">{fmtUsd(t.sellerNet)}</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-3 pt-2">
@@ -869,6 +957,32 @@ function DealRoom() {
                 </div>
               </div>
             )}
+
+            {/* TERMINAL STATE: DECLINED */}
+            {d.stage === "declined" && (
+              <div className="mt-5 space-y-4">
+                <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 text-center space-y-2">
+                  <XCircle className="mx-auto size-12 text-destructive" />
+                  <h3 className="text-xl font-bold text-ink">Deal Declined</h3>
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                    This seller financing application was declined by the seller. No further transactional actions are available for this deal.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* TERMINAL STATE: CANCELLED / WITHDRAWN */}
+            {d.stage === "cancelled" && (
+              <div className="mt-5 space-y-4">
+                <div className="rounded-2xl border border-muted-foreground/30 bg-muted/20 p-6 text-center space-y-2">
+                  <XCircle className="mx-auto size-12 text-muted-foreground" />
+                  <h3 className="text-xl font-bold text-ink">Deal Withdrawn</h3>
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                    This deal was withdrawn by the buyer. No further negotiation or transactional actions are available.
+                  </p>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Deal Activity & Negotiation History Feed */}
@@ -1012,11 +1126,12 @@ function DealRoom() {
               </div>
               <Slider
                 value={[counterDownPct]}
-                min={10}
-                max={40}
+                min={dealMinDown}
+                max={30}
                 step={1}
                 onValueChange={(val) => setCounterDownPct(val[0] ?? 15)}
               />
+              <p className="text-[11px] text-muted-foreground">Range: {dealMinDown}% to 30% maximum allowed.</p>
             </div>
             <div className="space-y-1">
               <div className="flex justify-between font-semibold text-ink">
@@ -1025,11 +1140,38 @@ function DealRoom() {
               </div>
               <Slider
                 value={[counterApr]}
-                min={6}
-                max={10}
+                min={5}
+                max={maxAprForDeal}
                 step={0.5}
                 onValueChange={(val) => setCounterApr(val[0] ?? 9)}
               />
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                <span>Min: 5.0%</span>
+                <span className="font-medium text-warning">{dealState} legal max: {maxAprForDeal.toFixed(1)}% APR</span>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <span className="font-semibold text-ink">Financing Term</span>
+              <div className="flex flex-wrap gap-2">
+                {dealAllowedTerms.map((termMonth) => {
+                  const sel = counterTerm === termMonth;
+                  return (
+                    <button
+                      type="button"
+                      key={termMonth}
+                      onClick={() => setCounterTerm(termMonth)}
+                      className={cn(
+                        "rounded-full border px-3 py-1 text-xs font-semibold transition-all",
+                        sel
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-surface text-muted-foreground hover:bg-accent"
+                      )}
+                    >
+                      {termMonth} mo
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="space-y-1">
               <label className="font-semibold text-ink">Note to other party</label>
@@ -1040,13 +1182,101 @@ function DealRoom() {
               <span className="text-muted-foreground">New monthly payment:</span>
               <span className="money text-lg font-bold text-primary">{fmtUsd(counterCalc.monthly, { cents: true })}/mo</span>
             </div>
+
+            {counterValidationError && (
+              <div className="rounded-lg bg-destructive/10 p-2.5 text-xs text-destructive font-medium border border-destructive/20">
+                {counterValidationError}
+              </div>
+            )}
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="ghost" onClick={() => setCounterOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleCounterSubmit}>
+            <Button onClick={handleCounterSubmit} disabled={!isCounterValid}>
               Send counter-offer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* SELLER DECLINE DIALOG */}
+      <Dialog open={declineOpen} onOpenChange={setDeclineOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <XCircle className="size-5" /> Decline Application
+            </DialogTitle>
+            <DialogDescription>
+              Provide a reason for declining this buyer's application for {d.car}. This action closes the deal.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2 text-xs">
+            <div className="space-y-1">
+              <label className="font-semibold text-ink">Reason for decline (required)</label>
+              <select
+                value={declinePreset}
+                onChange={(e) => setDeclinePreset(e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="Proposed down payment is insufficient">Proposed down payment is insufficient</option>
+                <option value="Applicant debt-to-income does not meet seller criteria">Applicant debt-to-income does not meet seller criteria</option>
+                <option value="Vehicle is no longer available">Vehicle is no longer available</option>
+                <option value="Proposed term or APR does not meet seller requirements">Proposed term or APR does not meet seller requirements</option>
+                <option value="Other / Custom reason">Other / Custom reason</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="font-semibold text-ink">Additional explanation (optional)</label>
+              <textarea
+                rows={3}
+                value={declineNote}
+                onChange={(e) => setDeclineNote(e.target.value)}
+                placeholder="Add any specific context for the buyer..."
+                className="w-full rounded-md border border-input bg-background p-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeclineOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeclineSubmit}>
+              Confirm Decline
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* BUYER WITHDRAW DIALOG */}
+      <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="size-5 text-muted-foreground" /> Withdraw Offer
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to withdraw your offer for {d.car}? This will cancel further negotiations.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2 text-xs">
+            <div className="space-y-1">
+              <label className="font-semibold text-ink">Reason / Note (optional)</label>
+              <textarea
+                rows={3}
+                value={withdrawNote}
+                onChange={(e) => setWithdrawNote(e.target.value)}
+                placeholder="e.g. Purchased another car, decided to hold off, etc."
+                className="w-full rounded-md border border-input bg-background p-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setWithdrawOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleWithdrawSubmit}>
+              Confirm Withdrawal
             </Button>
           </DialogFooter>
         </DialogContent>
