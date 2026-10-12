@@ -42,7 +42,7 @@ import { Calendar, TimeSlots, sameDay } from "@/components/kit-extra";
 import { openSlots, requestDrive, useAvailability, useDrives } from "@/lib/drives";
 import { SiteLayout } from "@/components/site/SiteChrome";
 import { CarCard, CarImage, Lightbox, STICKY_TOP, VerifiedSeller, bodyLabel, carFullTitle, carTitle } from "@/components/site/cars";
-import { useDemoStore } from "@/lib/demo-store";
+import { sellerFullName, useDemoStore } from "@/lib/demo-store";
 import { dealTerms, fmtUsd, marketPosition } from "@/lib/finance";
 import { listedAgo, miles, money, percent, titleCase } from "@/lib/format";
 import { liveSettings } from "@/lib/live-settings";
@@ -718,7 +718,7 @@ function AskModal({ vehicle: v, open, onClose }: { vehicle: PublicVehicle; open:
 }
 
 /** Listings show "Maria A."; drives are stored under the full account name. */
-const fullName = (display: string) => (display === "Maria A." ? "Maria Alvarez" : display);
+const fullName = (display: string) => (display === "Maria A." ? "Maria Alvarez" : sellerFullName(display));
 
 function TestDriveModal({
   vehicle: v,

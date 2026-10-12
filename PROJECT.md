@@ -29,6 +29,8 @@ This project is a demo that copies the look and behavior of https://ownerfi-poc.
 - `src/lib/finance.ts`: pure money math (down payment, fee, schedule, state interest caps).
 - `src/lib/admin-data.ts` and `admin-seed.ts`: admin model built from the stores above plus saved admin decisions (suspensions, review results, notes, refunds, settings, audit log).
 
+**Shared database (cross-browser).** `src/lib/shared-sync.ts` syncs cars, deals and their chat, test drives, notices and new accounts between browsers every ~2.5s (and right after a change). The server side is `shared.functions.ts` and `shared-store.server.ts`: the Supabase `shared_docs` table if you have applied `supabase/migrations/20261012120000_shared_demo_docs.sql`, otherwise a JSON file in `.data/` (local dev) or memory. Last write wins per doc; chat messages are merged. Demo-only: the table is open to anyone with the publishable key.
+
 **Screens.**
 - Public and auth: `src/routes/index.tsx`, `cars.*`, `auth.*`.
 - Portals: `src/components/app/PortalShell.tsx` (seller and buyer) and `src/components/admin/AdminShell.tsx` (admin) provide the sidebar, top bar, mobile nav and role guards. Each role has its own routes (`seller.*`, `buyer.*`, `admin.*`).

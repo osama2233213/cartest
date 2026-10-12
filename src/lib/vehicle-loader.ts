@@ -1,6 +1,7 @@
 import { notFound } from "@tanstack/react-router";
 import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import { getPublicVehicle, type PublicVehicle } from "@/lib/vehicles.functions";
+import { getSharedDoc } from "@/lib/shared.functions";
 
 /** Cars added in the demo are saved in the browser, so only the browser can show them. */
 export const isDemoCarId = (id: string) => id.startsWith("v-demo-");
@@ -38,6 +39,16 @@ export async function loadVehicle({
     // 1. First check if it's a locally created custom demo vehicle
     const local = findLocalCustomVehicle(params.id);
     if (local) return local;
+
+    // 1b. A car another seller listed in a different browser: ask the shared database.
+    if (isDemoCarId(params.id)) {
+      try {
+        const { json } = await getSharedDoc({ data: { kind: "vehicle", id: params.id } });
+        if (json) return JSON.parse(json) as PublicVehicle;
+      } catch {
+        // fall through
+      }
+    }
 
     // 2. If it matches a UUID format, fetch from Supabase
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);

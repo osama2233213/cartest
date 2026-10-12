@@ -3,6 +3,7 @@ import { z } from "zod";
 import { AppShell } from "@/components/app/AppShell";
 import { DealRoomBody } from "@/components/app/DealRoom";
 import { DEALS, type DemoDeal } from "@/lib/demo-data";
+import { getSharedDoc } from "@/lib/shared.functions";
 
 function findLocalDeal(id: string): DemoDeal | undefined {
   if (typeof window === "undefined") return undefined;

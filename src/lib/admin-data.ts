@@ -11,6 +11,8 @@ import { format } from "date-fns/format";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { startOfMonth } from "date-fns/startOfMonth";
 import { subMonths } from "date-fns/subMonths";
+import { isSameMonth } from "date-fns/isSameMonth";
+import { feeCentsIn, isBackfill, reconcileRevenue } from "./revenue";
 import { termsFor, REVENUE, STAGES, type DemoDeal, type Stage } from "./demo-data";
 import { useDemoStore, type DealDetailData } from "./demo-store";
 import { useDrives, type Drive } from "./drives";
@@ -769,7 +771,7 @@ export function useAdminModel() {
       ...HIST_CLOSED.map((h) => ({ key: h.id, closedAt: ago(h.closedDaysAgo), car: h.car, seller: h.seller, buyer: h.buyer, price: h.price, downPayment: h.down, fee: h.fee, outcome: h.outcome, durationMonths: h.months })),
     ];
 
-    const fees: FeeRow[] = [
+    const liveFees: FeeRow[] = [
       ...payments
         .filter((p) => p.kind === "down_payment")
         .map((p) => {
@@ -781,7 +783,8 @@ export function useAdminModel() {
       ...HIST_CLOSED.map((h) => ({ id: `fee-${h.id}`, at: ago(h.closedDaysAgo + h.months * 30), dealId: h.id, live: false, sellerName: h.seller, sellerId: userIdFor(h.seller), downPayment: h.down, fee: h.fee, status: "collected" as FeeRow["status"] })),
     ];
 
-    return { s, users, vehicles, dealRows, payments, closed, fees, partners, integrations, drives, deals, details: getDealDetail };
+    const { fees, months: revenueMonths } = reconcileRevenue(liveFees, REVENUE.map((x) => x.fees));
+    return { s, users, vehicles, dealRows, payments, closed, fees, revenueMonths, partners, integrations, drives, deals, details: getDealDetail };
   }, [s, sess.users, deals, customVehicles, pub, ads, drives, getDealDetail]);
 }
 export type AdminModel = ReturnType<typeof useAdminModel>;
@@ -789,7 +792,7 @@ export type AdminModel = ReturnType<typeof useAdminModel>;
 /* --------------------------------------------------------------- dashboards */
 
 export function dashboardOf(m: AdminModel) {
-  const months = REVENUE;
+  const months = m.revenueMonths;
   const thisMonthFees = months[months.length - 1]!.fees;
   const open = m.dealRows.filter((r) => !isClosedStage(r.deal.stage));
   const waiting = m.s.queue.filter((q) => q.status === "in_review").length;
@@ -846,15 +849,16 @@ export const dateTime = (iso: string) => format(new Date(iso), "MMM d, yyyy 'at'
 /* --------------------------------------------------------------- aggregates */
 
 export function revenueSummary(m: AdminModel) {
-  const r = REVENUE;
-  const thisMonth = r[r.length - 1]!.fees * 100;
-  const lastMonth = r[r.length - 2]!.fees * 100;
-  const ytd = r.slice(-10).reduce((sum, x) => sum + x.fees, 0) * 100;
-  const allTime = r.reduce((sum, x) => sum + x.fees, 0) * 100;
+  const r = m.revenueMonths;
+  const now = new Date();
+  const thisMonth = feeCentsIn(m.fees, (d) => isSameMonth(d, now));
+  const lastMonth = feeCentsIn(m.fees, (d) => isSameMonth(d, subMonths(now, 1)));
+  const ytd = feeCentsIn(m.fees, (d) => d.getFullYear() === now.getFullYear());
+  const allTime = feeCentsIn(m.fees, () => true);
   const waived = m.fees.filter((f) => f.status === "waived");
   const byMonth = r.map((x) => ({ month: x.month, fees: x.fees }));
   const by = new Map<string, { fee: number; deals: number; name: string }>();
-  for (const f of m.fees.filter((x) => x.status === "collected")) {
+  for (const f of m.fees.filter((x) => x.status === "collected" && !isBackfill(x))) {
     const k = f.sellerId ?? f.sellerName;
     const cur = by.get(k) ?? { fee: 0, deals: 0, name: f.sellerName };
     by.set(k, { fee: cur.fee + f.fee, deals: cur.deals + 1, name: f.sellerName });
@@ -862,8 +866,8 @@ export function revenueSummary(m: AdminModel) {
   const top = [...by.entries()].map(([sellerId, v]) => ({ sellerId, seller: m.users.find((u) => u.id === sellerId), ...v })).sort((a, b) => b.fee - a.fee).slice(0, 5);
   const avg = Math.round((r.slice(-4, -1).reduce((sum, x) => sum + x.fees, 0) / 3) * 100);
   const projection = [1, 2, 3].map((i) => ({ month: format(addDays(startOfMonth(new Date()), 32 * i), "yyyy-MM"), label: format(addDays(startOfMonth(new Date()), 32 * i), "MMMM yyyy"), fee: avg }));
-  const reconciliation = [3, 2, 1, 0].map((i) => ({ month: format(subMonths(new Date(), i), "yyyy-MM"), label: format(subMonths(new Date(), i), "MMMM yyyy"), ledger: r[r.length - 1 - i]!.fees * 100, received: r[r.length - 1 - i]!.fees * 100, status: i === 0 ? ("pending" as const) : ("matched" as const) }));
-  return { totals: { thisMonth, lastMonth, ytd, allTime, deals: m.fees.length + 18, waivedCount: waived.length + m.users.filter((u) => u.feeWaived).length, waivedForgone: waived.reduce((sum, f) => sum + Math.round(f.downPayment * m.s.feeRate), 0) }, byMonth, top, projection, reconciliation };
+  const reconciliation = [3, 2, 1, 0].map((i) => ({ month: format(subMonths(new Date(), i), "yyyy-MM"), label: format(subMonths(new Date(), i), "MMMM yyyy"), ledger: feeCentsIn(m.fees, (d) => isSameMonth(d, subMonths(new Date(), i))), received: feeCentsIn(m.fees, (d) => isSameMonth(d, subMonths(new Date(), i))), status: i === 0 ? ("pending" as const) : ("matched" as const) }));
+  return { totals: { thisMonth, lastMonth, ytd, allTime, deals: m.fees.filter((f) => !isBackfill(f)).length, waivedCount: waived.length + m.users.filter((u) => u.feeWaived).length, waivedForgone: waived.reduce((sum, f) => sum + Math.round(f.downPayment * m.s.feeRate), 0) }, byMonth, top, projection, reconciliation };
 }
 
 export function driveStats(drives: Drive[]) {

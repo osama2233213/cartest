@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { format } from "date-fns/format";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CreditCard, FileText, Receipt } from "lucide-react";
 import { Alert, Breakdown, Button, ButtonLink, Card, CardHeader, EmptyState, Modal, NativeSelect, PageHeader, Switch, useToast } from "@/components/kit";
 import { PayModal } from "@/components/app/PayModal";
@@ -45,7 +45,10 @@ function BuyerPayments() {
   const { getDealDetail } = useDemoStore();
   const { deal: dealParam } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const deal = deals.find((d) => d.id === dealParam) ?? deals.find((d) => d.late) ?? deals[0];
+  // Pick the car once (the late one first) and keep it, so paying it off does not swap the page to another car mid-receipt.
+  const picked = useRef<string | undefined>(undefined);
+  const deal = deals.find((d) => d.id === (dealParam ?? picked.current)) ?? deals.find((d) => d.late) ?? deals[0];
+  if (!dealParam && deal && !picked.current) picked.current = deal.id;
   const ap = useAutopay(deal?.id ?? "");
   const pay = usePayNext(deal?.id ?? "");
   const [payOpen, setPayOpen] = useState(false);

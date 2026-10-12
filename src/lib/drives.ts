@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { hashOf, type SyncSource } from "./shared-sync";
 
 export type DriveStatus = "requested" | "confirmed" | "declined" | "rescheduled" | "completed" | "no_show" | "cancelled";
 
@@ -123,6 +124,36 @@ export function resetDrives() {
   load();
   writeDrives(seedDrives());
 }
+
+/** Test drives are shared, so a buyer's request reaches the seller's calendar in another browser. */
+export const driveSync: SyncSource & { subscribe: (l: () => void) => () => void } = {
+  subscribe: (l) => {
+    listeners.add(l);
+    return () => listeners.delete(l);
+  },
+  local() {
+    load();
+    return drives.map((d) => ({ id: `drive:${d.id}`, refs: [d], data: () => d }));
+  },
+  // The four demo drives every browser starts with count as untouched until their status changes.
+  isPristine: (id) => {
+    const seed = seedDrives().find((d) => `drive:${d.id}` === id);
+    const cur = drives.find((d) => `drive:${d.id}` === id);
+    return !!seed && !!cur && seed.status === cur.status && seed.dealId === cur.dealId;
+  },
+  apply(docs, dirty) {
+    load();
+    let next = drives;
+    for (const r of docs) {
+      if (!r.id.startsWith("drive:") || dirty.has(r.id)) continue;
+      const d = r.data as Drive;
+      const i = next.findIndex((x) => x.id === d.id);
+      if (i >= 0 && hashOf(next[i]) === hashOf(d)) continue;
+      next = i >= 0 ? next.map((x, j) => (j === i ? d : x)) : [d, ...next];
+    }
+    if (next !== drives) writeDrives(next);
+  },
+};
 
 /* ------------------------------------------------------------ slot logic */
 

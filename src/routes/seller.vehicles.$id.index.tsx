@@ -522,7 +522,7 @@ function VehiclePage() {
                       <Avatar name={d.buyer} size="sm" />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-semibold">{d.buyer.split(" ")[0]}</span>
-                        <span className="block truncate text-sm text-muted">{getNextAction(d, "seller").text}</span>
+                        <span className="block truncate text-sm text-muted">{getNextAction(d, "seller", getDealDetail(d.id)).text}</span>
                       </span>
                       <StatusChip kind="deal" value={d.stage} />
                       <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted" />

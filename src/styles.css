@@ -60,15 +60,37 @@
   --color-sidebar-ring: rgb(var(--c-primary));
 
   --radius-3xl: 20px;
-  --shadow-card: 0 1px 2px rgb(var(--c-ink) / 0.04), 0 1px 3px rgb(var(--c-ink) / 0.04);
-  --shadow-raised: 0 2px 4px rgb(var(--c-ink) / 0.04), 0 12px 32px rgb(var(--c-ink) / 0.1);
-  --shadow-glow: 0 4px 14px rgb(var(--c-primary) / 0.25);
+  --shadow-card: 0 1px 2px rgb(var(--c-ink) / 0.05), 0 4px 16px -4px rgb(var(--c-ink) / 0.08);
+  --shadow-raised: 0 4px 8px -2px rgb(var(--c-ink) / 0.06), 0 24px 48px -12px rgb(var(--c-ink) / 0.18);
+  --shadow-glow: 0 8px 24px -6px rgb(var(--c-primary) / 0.45);
   --font-sans: "Inter Variable", system-ui, sans-serif;
   --font-display: "Space Grotesk Variable", "Inter Variable", system-ui, sans-serif;
 }
 
+/* Midnight Indigo: the default theme. Deep navy ink, vivid indigo primary, warm neutral surfaces. */
 :root,
+[data-theme="indigo"] {
+  --c-primary: 79 70 229;
+  --c-primary-50: 240 240 255;
+  --c-primary-100: 224 225 253;
+  --c-primary-200: 196 199 250;
+  --c-primary-600: 67 56 202;
+  --c-primary-700: 55 48 163;
+  --c-ink: 15 18 40;
+  --c-muted: 100 105 128;
+  --c-surface: 246 247 252;
+  --c-sky: 165 180 252;
+  --c-accent: 79 70 229;
+  --c-accent-fg: 255 255 255;
+  --c-success: 5 150 105;
+  --c-warning: 202 120 4;
+  --c-danger: 225 29 72;
+}
+
 [data-theme="blue"] {
+  --c-success: 15 123 95;
+  --c-warning: 178 106 0;
+  --c-danger: 196 43 58;
   --c-primary: 23 92 211;
   --c-primary-50: 238 244 253;
   --c-primary-100: 220 231 250;
@@ -144,6 +166,10 @@
 
   body {
     background-color: rgb(var(--c-surface));
+    background-image:
+      radial-gradient(900px 420px at 100% -10%, rgb(var(--c-primary) / 0.07), transparent 70%),
+      radial-gradient(700px 360px at -10% 0%, rgb(var(--c-sky) / 0.12), transparent 70%);
+    background-attachment: fixed;
     color: rgb(var(--c-ink));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -152,8 +178,9 @@
   }
 
   h1,
-  h2 {
-    letter-spacing: -0.02em;
+  h2,
+  h3 {
+    letter-spacing: -0.025em;
     font-family: var(--font-display);
   }
 
@@ -174,7 +201,17 @@
   :focus-visible {
     outline: 2px solid rgb(var(--c-primary));
     outline-offset: 2px;
+    border-radius: 0.5rem;
   }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--c-ink) / 0.18);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-ink) / 0.3); background-clip: padding-box; }
 
   h1[tabindex="-1"]:focus-visible,
   h2[tabindex="-1"]:focus-visible,
@@ -206,22 +243,30 @@
 
 @utility bg-brand-glow {
   background-image:
-    radial-gradient(60% 80% at 85% 0%, rgb(var(--c-primary) / 0.45) 0%, transparent 70%),
-    radial-gradient(50% 60% at 0% 100%, rgb(var(--c-sky) / 0.16) 0%, transparent 70%);
+    radial-gradient(60% 80% at 85% 0%, rgb(var(--c-primary) / 0.55) 0%, transparent 70%),
+    radial-gradient(50% 60% at 0% 100%, rgb(var(--c-sky) / 0.22) 0%, transparent 70%),
+    linear-gradient(135deg, rgb(var(--c-ink)) 0%, rgb(var(--c-primary-700)) 140%);
 }
 
 @utility card-surface {
   background: #fff;
-  border: 1px solid rgb(var(--c-ink) / 0.08);
-  border-radius: 1rem;
+  border: 1px solid rgb(var(--c-ink) / 0.07);
+  border-radius: 1.125rem;
   box-shadow: var(--shadow-card);
 }
 
 @utility hero-glow {
   background:
-    radial-gradient(60% 50% at 80% 10%, rgb(var(--c-primary) / 0.14), transparent 70%),
-    radial-gradient(40% 40% at 10% 90%, rgb(var(--c-sky) / 0.1), transparent 70%),
+    radial-gradient(60% 50% at 80% 10%, rgb(var(--c-primary) / 0.18), transparent 70%),
+    radial-gradient(40% 40% at 10% 90%, rgb(var(--c-sky) / 0.2), transparent 70%),
     #fff;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(120deg, rgb(var(--c-primary)), rgb(var(--c-sky)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 @utility scrollbar-none {

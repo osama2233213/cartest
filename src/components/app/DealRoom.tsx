@@ -522,6 +522,15 @@ function ClosingBody({ d, detail, role }: { d: DemoDeal; detail: DealDetailData;
             Add evidence (a photo of the signed title or the DMV receipt)
             <input type="file" accept="image/*,application/pdf" onChange={(e) => setFile(e.target.files?.[0]?.name ?? "")} className="mt-2 block w-full text-sm" />
           </label>
+          {file ? (
+            <p className="flex items-center gap-2 text-sm text-success">
+              <Check aria-hidden className="h-4 w-4" /> {file}
+            </p>
+          ) : (
+            <button type="button" className="text-sm font-semibold text-primary underline-offset-2 hover:underline" onClick={() => setFile("signed-title-sample.jpg")}>
+              Use a sample photo (demo)
+            </button>
+          )}
           <Button disabled={!file} onClick={() => act(() => store.confirmClosing(d.id, me, file), "Confirmed. We’ll start the loan when " + other + " confirms too.")}>
             I confirm the title moved
           </Button>

@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CheckCircle2, Clock, Loader2, UploadCloud } from "lucide-react";
 import { Alert, Button, ButtonLink, Card } from "@/components/kit";
 import { StatusChip } from "@/components/status";
-import { IDENTITY_APPROVE_MS, identityOutcome, loadOutcome, saveOutcome } from "@/lib/identity-check";
+import { identityOutcome, loadOutcome, saveOutcome } from "@/lib/identity-check";
 import { auth, useCurrentUser } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
@@ -52,17 +52,8 @@ export function IdentityFlow({
   const [selfie, setSelfie] = useState<string>();
   const [consent, setConsent] = useState(false);
 
-  useEffect(() => {
-    if (!user || status !== "in_review") return;
-    const outcome = loadOutcome(user.id);
-    if (outcome === "review") return; // stays in the manual queue until a person decides
-    const t = window.setTimeout(
-      () => auth.setVerification(user.id, { identity: outcome === "rejected" ? "rejected" : "verified" }),
-      IDENTITY_APPROVE_MS,
-    );
-    return () => window.clearTimeout(t);
-  }, [status, user]);
-
+  // The check itself finishes in the background (resolveIdentityChecks in session.ts), so it completes even
+  // if the person leaves this page. This screen only shows where it is.
   if (!user) return null;
 
   if (status === "verified") {

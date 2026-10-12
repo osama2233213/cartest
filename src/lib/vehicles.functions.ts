@@ -27,6 +27,8 @@ export type PublicVehicle = {
   id: string;
   seller_display_name: string;
   seller_verified: boolean;
+  /** The signed-in seller who published this car in the demo. Cars from the database have none. */
+  owner_id?: string | undefined;
   vin?: string | null | undefined;
   year: number;
   make: string;

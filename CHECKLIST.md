@@ -41,38 +41,38 @@
 - [x] Per-stage actions (seller and buyer)
 - [x] Risk summary, numbers, people, documents, chat
 - [x] Shared with admin (read-only view)
-- [ ] Every stage and modal clicked through as both seller and buyer
+- [x] Every stage and modal clicked through as both seller and buyer
 
 ## Admin
 - [x] Shell and navigation (5 groups, mobile menu)
 - [x] Dashboard
 - [x] Verifications (approve clicked through)
-- [ ] Verifications: reject, request info, bulk approve clicked through
+- [x] Verifications: reject, request info, bulk approve clicked through
 - [x] Users and user detail
-- [ ] Suspend, reinstate, reset 2-step, View as clicked through
+- [x] Suspend, reinstate, reset 2-step, View as clicked through
 - [x] Vehicles and vehicle detail
-- [ ] Approve, take down, flag actions clicked through
+- [x] Approve, take down, flag actions clicked through
 - [x] Deals board/table and admin deal page
-- [ ] Pause, escalate, cancel, mark default clicked through
+- [x] Pause, escalate, cancel, mark default clicked through
 - [x] Test drives, closed deals (CSV)
 - [x] Revenue, payments
-- [ ] Refund and dispute actions clicked through
+- [x] Refund and dispute actions clicked through
 - [x] Advertising and partner detail
 - [x] Integrations and detail
 - [x] Settings: fees, state rules, policies, team
-- [ ] Settings saves clicked through
+- [x] Settings saves clicked through
 - [x] Audit log, support, notifications, account
-- [ ] Support reply/solve clicked through
+- [x] Support reply/solve clicked through
 
 ## Quality
 - [x] `tsc` clean
 - [x] `npm run build` passes
-- [x] 13 vitest tests pass
-- [ ] Tests added for admin data and actions
-- [ ] Layout check at phone width for admin pages
+- [x] 87 vitest tests pass
+- [x] Tests for revenue reconciliation (admin actions were verified by hand in the browser, not unit tested)
+- [x] Layout check at phone width for admin pages
 
 ## Remaining roadmap
-- [ ] Full notification seed data
+- [x] Full notification seed data
 - [ ] Mock vendor adapters
-- [ ] Replace invented admin data with real data where it exists
-- [ ] Make revenue totals match the fee ledger rows
+- [ ] Replace invented admin data with real data where it exists (revenue now comes from the ledger; partners, tickets and integrations are still mock)
+- [x] Make revenue totals match the fee ledger rows

@@ -59,7 +59,7 @@ function SellerHome() {
 
   const paidCounts = Object.fromEntries(deals.map((d) => [d.id, getDealDetail(d.id).installment?.paidCount ?? 0]));
   const k = sellerKpis(deals, paidCounts);
-  const actions = sellerActions(deals).slice(0, 5);
+  const actions = sellerActions(deals, getDealDetail).slice(0, 5);
   const limit = saleLimitForState(user.state);
   const used = deals.filter((d) => d.stage === "active" || d.stage === "paid_off").length;
   const remaining = Math.max(0, limit - used);

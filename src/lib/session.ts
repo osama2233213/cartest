@@ -7,6 +7,8 @@
  */
 import { useSyncExternalStore } from "react";
 import type { Role } from "./demo-data";
+import { clearDue, dueDecisions } from "./identity-check";
+import { hashOf, type SyncSource } from "./shared-sync";
 
 export const DEMO_PASSWORD = "Demo1234!";
 export const DEMO_CODE = "123456";
@@ -182,6 +184,22 @@ function set(next: Partial<State>) {
   emit();
 }
 
+/**
+ * Finishes ID checks whose time is up: approved, or rejected for a file name with "reject". It runs in the background,
+ * so a seller who submits their ID and goes on to add a car still ends up verified. A "review" check waits for a person.
+ */
+export function resolveIdentityChecks() {
+  for (const { userId, outcome } of dueDecisions()) {
+    const u = state.users.find((x) => x.id === userId);
+    clearDue(userId);
+    if (u && u.verification.identity === "in_review") {
+      set({ users: state.users.map((x) => (x.id === userId ? { ...x, verification: { ...x.verification, identity: outcome === "rejected" ? "rejected" : "verified" } } : x)) });
+    }
+  }
+}
+
+let identityTicker = 0;
+
 /** Load the saved session after the first client render (keeps SSR and hydration identical). */
 export function hydrateSession() {
   if (hydrated || typeof window === "undefined") return;
@@ -207,6 +225,9 @@ export function hydrateSession() {
   }
   state = { ...state, ready: true };
   emit();
+  // Pick up any ID check that came due while the page was closed, then keep watching.
+  resolveIdentityChecks();
+  if (!identityTicker) identityTicker = window.setInterval(resolveIdentityChecks, 1000);
 }
 
 export function resetSession() {
@@ -243,6 +264,35 @@ export function useCurrentUser(): SessionUser | null {
 export function getSessionState() {
   return state;
 }
+
+/* --------------------------------------------------- shared accounts */
+
+/** Accounts people sign up with are shared, so a buyer who signed up in one browser can sign in from another. */
+export const accountSync: SyncSource & { subscribe: (l: () => void) => () => void } = {
+  subscribe,
+  local() {
+    const seedIds = new Set(seed().users.map((u) => u.id));
+    return state.users
+      .filter((u) => !seedIds.has(u.id))
+      .map((u) => {
+        const password = state.passwords[norm(u.email)];
+        return { id: `user:${u.id}`, refs: [u, password], data: () => ({ user: u, password }) };
+      });
+  },
+  apply(docs, dirty) {
+    let users = state.users;
+    let passwords = state.passwords;
+    for (const r of docs) {
+      if (!r.id.startsWith("user:") || dirty.has(r.id)) continue;
+      const { user, password } = r.data as { user: SessionUser; password?: string };
+      const i = users.findIndex((x) => x.id === user.id);
+      if (i >= 0 && hashOf(users[i]) === hashOf(user) && passwords[norm(user.email)] === password) continue;
+      users = i >= 0 ? users.map((x, j) => (j === i ? user : x)) : [...users, user];
+      if (password) passwords = { ...passwords, [norm(user.email)]: password };
+    }
+    if (users !== state.users || passwords !== state.passwords) set({ users, passwords });
+  },
+};
 
 /* ------------------------------------------------------------ demo flags */
 

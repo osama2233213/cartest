@@ -83,7 +83,8 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "acce
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-white shadow-glow hover:bg-primary-600 active:bg-primary-700",
+  primary:
+    "bg-gradient-to-b from-primary to-primary-600 text-white shadow-glow hover:-translate-y-px hover:shadow-raised active:bg-primary-700",
   secondary:
     "border border-ink/15 bg-white text-ink shadow-card hover:border-ink/25 hover:bg-surface",
   ghost: "bg-transparent text-ink hover:bg-ink/5",
@@ -104,7 +105,7 @@ export function buttonClasses(
 ) {
   return cn(
     "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold",
-    "transition-[background-color,border-color,box-shadow,transform] duration-150 active:scale-[0.98]",
+    "transition-[background-color,border-color,box-shadow,transform] duration-200 active:scale-[0.98]",
     "disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100",
     "aria-disabled:cursor-not-allowed aria-disabled:opacity-50",
     VARIANT[variant],
@@ -201,7 +202,7 @@ export function Card({
 }: HTMLAttributes<HTMLDivElement> & { padding?: keyof typeof CARD_PAD }) {
   return (
     <div
-      className={cn("rounded-2xl border border-ink/[0.08] bg-white shadow-card", CARD_PAD[padding], className)}
+      className={cn("rounded-[1.125rem] border border-ink/[0.07] bg-white shadow-card", CARD_PAD[padding], className)}
       {...rest}
     />
   );

@@ -35,8 +35,12 @@ import { demoNow } from "./demo-clock";
 import { liveSettings } from "./live-settings";
 import { advance, daysLate, fmtDue, recordPayment, type InstState, type SchedEvent } from "./installments";
 import { notify } from "./notify";
+import { createSharedSync, hashOf, unionById, type SyncSource } from "./shared-sync";
+import { resetShared } from "./shared.functions";
+import { noticeSync } from "./notifications";
+import { driveSync } from "./drives";
 import type { EventKey } from "./prefs";
-import { demoFlags, getSessionState, useSession } from "./session";
+import { accountSync, demoFlags, getSessionState, useSession } from "./session";
 
 export interface DealMessage {
   id: string;
@@ -212,6 +216,11 @@ function getInitialState(): DemoStoreState {
     console.error("Failed to load demo store from localStorage:", err);
   }
 
+  return seedState();
+}
+
+/** The deals every browser starts with. */
+function seedState(): DemoStoreState {
   // Pre-seed deals with rich stage-aware data
   const initialDetails: Record<string, DealDetailData> = {
     "d-1001": {
@@ -268,6 +277,10 @@ export const uidOf = (name: string) =>
   accountByName(name)?.id ?? (name === PERSONAS.buyer.name ? "u-daniel" : name === PERSONAS.seller.name ? "u-maria" : `u-${slugOf(name)}`);
 const mailOf = (name: string) =>
   accountByName(name)?.email ?? (name === PERSONAS.buyer.name ? PERSONAS.buyer.email : name === PERSONAS.seller.name ? PERSONAS.seller.email : `${slugOf(name)}@demo.com`);
+/** Listings show "Maria A."; a deal and the seller's own screens use the account's full name. Unknown names pass through. */
+export const sellerFullName = (display: string) => accountByName(display)?.name ?? display;
+/** How a listing names its seller: "First L." */
+export const sellerDisplayName = (full: string) => shortName(full);
 const sessionUser = () => {
   const s = getSessionState();
   return s.users.find((u) => u.id === s.currentUserId) ?? null;
@@ -376,7 +389,7 @@ interface DemoStoreContextValue {
   updateVehicle: (id: string, patch: VehicleEdit) => void;
   getDeal: (id: string) => DemoDeal | undefined;
   getDealDetail: (id: string) => DealDetailData;
-  addVehicle: (vehicle: Omit<PublicVehicle, "id" | "created_at" | "status" | "seller_display_name" | "seller_verified">) => PublicVehicle;
+  addVehicle: (vehicle: Omit<PublicVehicle, "id" | "created_at" | "status" | "seller_display_name" | "seller_verified" | "owner_id">) => PublicVehicle;
   createInquiry: (vehicle: PublicVehicle, message: string) => string;
   bookTestDrive: (vehicle: PublicVehicle, slot: string, location?: string | undefined) => string;
   makeOffer: (vehicle: PublicVehicle, terms: { priceCents: number; downPct: number; apr: number; term: number }) => string;
@@ -449,6 +462,88 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
     };
   }, [state]);
 
+  // Share cars, deals, chat, notices and new accounts with every other browser through the shared database.
+  const syncRef = useRef<ReturnType<typeof createSharedSync> | null>(null);
+  useEffect(() => {
+    const seed = seedState();
+    const seedHash = new Map<string, string>(
+      seed.deals.map((d) => [`deal:${d.id}`, hashOf({ deal: d, detail: seed.dealDetails[d.id] })]),
+    );
+    const store: SyncSource = {
+      local: () => {
+        const s = stateRef.current;
+        return [
+          ...s.customVehicles.map((v) => ({ id: `vehicle:${v.id}`, refs: [v], data: () => v })),
+          ...Object.entries(s.vehicleEdits ?? {}).map(([id, e]) => ({ id: `vedit:${id}`, refs: [e], data: () => e })),
+          ...s.deals.map((d) => ({
+            id: `deal:${d.id}`,
+            refs: [d, s.dealDetails[d.id]],
+            data: () => ({ deal: d, detail: s.dealDetails[d.id] }),
+          })),
+        ];
+      },
+      isPristine: (id, hash) => seedHash.get(id) === hash,
+      apply: (docs, dirty, fresh) =>
+        setState((prev) => {
+          let next = prev;
+          for (const r of docs) {
+            const at = r.id.indexOf(":");
+            const kind = r.id.slice(0, at);
+            const key = r.id.slice(at + 1);
+            if (kind === "vehicle") {
+              if (dirty.has(r.id)) continue;
+              const v = r.data as PublicVehicle;
+              const cur = next.customVehicles.find((x) => x.id === key);
+              if (cur && hashOf(cur) === hashOf(v)) continue;
+              const list = cur ? next.customVehicles.map((x) => (x.id === key ? v : x)) : [...next.customVehicles, v];
+              next = { ...next, customVehicles: list.sort((a, b) => b.created_at.localeCompare(a.created_at)) };
+            } else if (kind === "vedit") {
+              if (dirty.has(r.id)) continue;
+              const e = r.data as VehicleEdit;
+              if (hashOf(next.vehicleEdits?.[key]) === hashOf(e)) continue;
+              next = { ...next, vehicleEdits: { ...next.vehicleEdits, [key]: e } };
+            } else if (kind === "deal") {
+              const { deal, detail } = r.data as { deal: DemoDeal; detail?: DealDetailData };
+              const curDeal = next.deals.find((x) => x.id === key);
+              const curDetail = next.dealDetails[key];
+              if (hashOf({ deal: curDeal, detail: curDetail }) === hashOf({ deal, detail })) continue;
+              if (dirty.has(r.id)) {
+                // Both sides changed this deal: keep ours, but never lose a chat message.
+                if (detail && curDetail) {
+                  const messages = unionById(detail.messages, curDetail.messages);
+                  next = { ...next, dealDetails: { ...next.dealDetails, [key]: { ...curDetail, messages } } };
+                }
+                continue;
+              }
+              // First contact with a deal that exists elsewhere: take theirs, plus any messages only we have.
+              const merged = detail && curDetail && fresh.has(r.id) ? { ...detail, messages: unionById(detail.messages, curDetail.messages) } : detail;
+              next = {
+                ...next,
+                deals: curDeal ? next.deals.map((x) => (x.id === key ? deal : x)) : [deal, ...next.deals],
+                dealDetails: merged ? { ...next.dealDetails, [key]: merged } : next.dealDetails,
+              };
+            }
+          }
+          return next;
+        }),
+    };
+    const sync = createSharedSync([store, accountSync, noticeSync, driveSync]);
+    syncRef.current = sync;
+    const un = [accountSync.subscribe(sync.changed), noticeSync.subscribe(sync.changed), driveSync.subscribe(sync.changed)];
+    const onShow = () => document.visibilityState === "visible" && void sync.now();
+    document.addEventListener("visibilitychange", onShow);
+    sync.start();
+    return () => {
+      sync.stop();
+      un.forEach((f) => f());
+      document.removeEventListener("visibilitychange", onShow);
+      syncRef.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    syncRef.current?.changed();
+  }, [state]);
+
   // Time travel and page load: charge autopay on due dates and send the late notices that are due.
   useEffect(() => {
     const prev = stateRef.current;
@@ -485,13 +580,17 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
     return ensureDealDetail(state.dealDetails, id);
   };
 
-  const addVehicle = (input: Omit<PublicVehicle, "id" | "created_at" | "status" | "seller_display_name" | "seller_verified">): PublicVehicle => {
+  const addVehicle = (input: Omit<PublicVehicle, "id" | "created_at" | "status" | "seller_display_name" | "seller_verified" | "owner_id">): PublicVehicle => {
     const newId = "v-demo-" + Date.now();
+    // The car belongs to whoever is signed in as a seller. With nobody signed in (demo shortcuts) it's the demo seller's.
+    const owner = sessionUser();
+    const seller = owner && owner.role === "seller" ? owner : null;
     const newVehicle: PublicVehicle = {
       ...input,
       id: newId,
-      seller_display_name: PERSONAS.seller.name,
-      seller_verified: true,
+      seller_display_name: seller ? shortName(seller.name) : PERSONAS.seller.name,
+      seller_verified: seller ? seller.verification.identity === "verified" && seller.verification.payouts === "verified" : true,
+      ...(seller ? { owner_id: seller.id } : {}),
       status: "listed",
       created_at: new Date().toISOString(),
     };
@@ -527,7 +626,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       id: dealId,
       car: carTitle,
       photo: vehicle.photos[0] || "https://images.unsplash.com/photo-1606611013016-969c19ba27bb?w=800",
-      seller: vehicle.seller_display_name || PERSONAS.seller.name,
+      seller: sellerFullName(vehicle.seller_display_name || PERSONAS.seller.name),
       buyer: buyerName(),
       stage: "inquiry",
       vehicleId: vehicle.id,
@@ -602,7 +701,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       id: dealId,
       car: carTitle,
       photo: vehicle.photos[0] || "https://images.unsplash.com/photo-1606611013016-969c19ba27bb?w=800",
-      seller: vehicle.seller_display_name || PERSONAS.seller.name,
+      seller: sellerFullName(vehicle.seller_display_name || PERSONAS.seller.name),
       buyer: buyerName(),
       stage: "test_drive",
       vehicleId: vehicle.id,
@@ -720,7 +819,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       id: dealId,
       car: carTitle,
       photo: vehicle.photos[0] || "https://images.unsplash.com/photo-1606611013016-969c19ba27bb?w=800",
-      seller: vehicle.seller_display_name || PERSONAS.seller.name,
+      seller: sellerFullName(vehicle.seller_display_name || PERSONAS.seller.name),
       buyer: buyerName(),
       stage: "application",
       vehicleId: vehicle.id,
@@ -1458,6 +1557,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
     setState(getInitialState());
+    void resetShared();
   };
 
   const value = useMemo(

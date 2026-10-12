@@ -63,7 +63,8 @@ export function useSellerVehicles() {
   const name = user?.name ?? "";
   const vehicles = useMemo(() => {
     const db = (q.data?.vehicles ?? []).filter((v) => sameSeller(v.seller_display_name, name));
-    const mine = customVehicles.filter((v) => !db.some((d) => d.id === v.id));
+    // Cars published in this demo belong to the seller who published them. Older ones carry only a name.
+    const mine = customVehicles.filter((v) => !db.some((d) => d.id === v.id) && (v.owner_id ? v.owner_id === user?.id : sameSeller(v.seller_display_name, name)));
     return [...mine, ...db].map(withEdits).map((v) => ({ vehicle: v, status: vehicleStatus(v, deals), ...vehicleStats(v.id) }));
   }, [q.data, customVehicles, deals, name, withEdits]);
   return { vehicles, loading: q.isLoading, error: q.isError, reload: () => void q.refetch() };
@@ -90,9 +91,9 @@ export function sellerKpis(deals: DemoDeal[], paidCounts: Record<string, number>
   return { monthlyIncome: monthly, outstanding: owed, interestYtd, activeNotes: active.length };
 }
 
-export function sellerActions(deals: DemoDeal[]) {
+export function sellerActions(deals: DemoDeal[], detailOf?: Parameters<typeof getNextAction>[2] extends infer D ? (id: string) => D : never) {
   return deals
-    .map((deal) => ({ deal, next: getNextAction(deal, "seller") }))
+    .map((deal) => ({ deal, next: getNextAction(deal, "seller", detailOf?.(deal.id)) }))
     .filter((x) => x.next.who === "you");
 }
 
