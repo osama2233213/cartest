@@ -2,6 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Eye, LogOut } from "lucide-react";
 import { Logo } from "@/components/site/SiteChrome";
+import { AdminFrame } from "@/components/admin/AdminShell";
+import { PortalFrame } from "@/components/app/PortalShell";
 import { PERSONAS, STAGE_LABEL, type Role, type Stage } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
@@ -64,27 +66,9 @@ export function DemoBar({ role }: { role: Role }) {
   );
 }
 
-export function AppShell({ role, children, nav }: { role: Role; children: ReactNode; nav?: ReactNode }) {
-  const p = PERSONAS[role];
-  return (
-    <div className="min-h-screen bg-surface">
-      <DemoBar role={role} />
-      <header className="border-b border-border bg-background">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Logo />
-          <nav className="hidden gap-5 text-sm font-medium text-muted-foreground md:flex">{nav}</nav>
-          <div className="flex items-center gap-2">
-            <div className="grid size-9 place-items-center rounded-full bg-primary/10 text-sm font-bold text-primary">{p.name[0]}</div>
-            <div className="hidden text-sm leading-tight sm:block">
-              <p className="font-semibold text-ink">{p.name}</p>
-              <p className="text-xs text-muted-foreground">{p.label}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-    </div>
-  );
+export function AppShell({ role, children }: { role: Role; children: ReactNode; nav?: ReactNode }) {
+  if (role === "admin") return <AdminFrame>{children}</AdminFrame>;
+  return <PortalFrame role={role}>{children}</PortalFrame>;
 }
 
 export function StageChip({ stage }: { stage: Stage }) {
@@ -97,10 +81,13 @@ export function StageChip({ stage }: { stage: Stage }) {
   return <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", tone)}>{STAGE_LABEL[stage]}</span>;
 }
 
-export function StatCard({ k, v, sub }: { k: string; v: string; sub?: string }) {
+export function StatCard({ k, v, sub, icon }: { k: string; v: string; sub?: string; icon?: ReactNode }) {
   return (
     <div className="card-surface p-5">
-      <p className="text-sm text-muted-foreground">{k}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">{k}</p>
+        {icon && <div>{icon}</div>}
+      </div>
       <p className="money mt-1 text-2xl font-bold text-ink">{v}</p>
       {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
     </div>

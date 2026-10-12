@@ -3,6 +3,8 @@
  * Rounding: half up. The final installment absorbs rounding drift.
  */
 
+import { liveSettings } from "./live-settings";
+
 export type StateRule = { state: string; max_apr: number; annual_sale_limit: number };
 
 export const DEFAULT_STATE_RULES: StateRule[] = [
@@ -26,7 +28,8 @@ export function platformFee(
   downPaymentCents: number,
   opts: { rate?: number | undefined; waived?: boolean | undefined } = {},
 ): number {
-  const rate = opts.rate ?? 0.1; const waived = opts.waived ?? false;
+  // Unless a rate is passed in, use the one the admin set (10% until they change it).
+  const rate = opts.rate ?? liveSettings().feeRate; const waived = opts.waived ?? false;
   if (waived) return 0;
   return roundHalfUp(downPaymentCents * rate);
 }
@@ -102,7 +105,7 @@ export const sellerTotalProceeds = (priceCents: number, interestCents: number, f
 export const buyerTotalCost = (downPaymentCents: number, schedule: Installment[]) =>
   downPaymentCents + schedule.reduce((s, r) => s + r.payment, 0);
 
-function ruleFor(state: string, rules: StateRule[] = DEFAULT_STATE_RULES): StateRule {
+function ruleFor(state: string, rules: StateRule[] = liveSettings().stateRules): StateRule {
   return (
     rules.find((r) => r.state === state) ??
     rules.find((r) => r.state === "other") ??

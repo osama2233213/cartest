@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import { PERSONAS, type Role } from "./demo-data";
+import { auth, hydrateSession, useCurrentUser, useSessionReady } from "./session";
 
 export interface MockUser {
   id: string;
@@ -11,86 +12,51 @@ export interface MockUser {
   avatar: string;
 }
 
-const MOCK_IDS: Record<Role, string> = {
-  seller: "usr_seller_001",
-  buyer: "usr_buyer_002",
-  admin: "usr_admin_003",
-};
-
-function userFromRole(role: Role): MockUser {
-  const p = PERSONAS[role];
-  return {
-    id: MOCK_IDS[role],
-    role,
-    name: p.name,
-    email: p.email,
-    city: p.city,
-    label: p.label,
-    avatar: p.name[0] ?? "?",
-  };
-}
-
 interface AuthContextValue {
+  /** False until the saved login has been read from storage (guards must wait for it) */
+  ready: boolean;
   /** Current logged-in user, or null if logged out */
   user: MockUser | null;
   /** Whether a user is currently authenticated */
   isLoggedIn: boolean;
-  /** Log in as a specific role */
+  /** Jump straight into a seeded demo persona (demo toolbar) */
   login: (role: Role) => void;
   /** Log out (clears session) */
   logout: () => void;
 }
 
-const AUTH_STORAGE_KEY = "ownerfi_mock_auth";
-
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const LABEL: Record<Role, string> = { seller: "Seller", buyer: "Buyer", admin: "Admin" };
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (raw) {
-        const role = raw as Role;
-        if (role === "seller" || role === "buyer" || role === "admin") {
-          return userFromRole(role);
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return null;
-  });
+  const current = useCurrentUser();
+  const ready = useSessionReady();
 
   useEffect(() => {
-    try {
-      if (user) {
-        localStorage.setItem(AUTH_STORAGE_KEY, user.role);
-      } else {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-      }
-    } catch {
-      // ignore
-    }
-  }, [user]);
-
-  const login = useCallback((role: Role) => {
-    setUser(userFromRole(role));
+    hydrateSession();
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-  }, []);
-
-  const value = useMemo<AuthContextValue>(
-    () => ({
+  const value = useMemo<AuthContextValue>(() => {
+    const user: MockUser | null = current
+      ? {
+          id: current.id,
+          role: current.role,
+          name: current.name,
+          email: current.email,
+          city: PERSONAS[current.role].city,
+          label: LABEL[current.role],
+          avatar: current.name[0] ?? "?",
+        }
+      : null;
+    return {
+      ready,
       user,
       isLoggedIn: user !== null,
-      login,
-      logout,
-    }),
-    [user, login, logout],
-  );
+      login: (role) => auth.setPersona(role),
+      logout: () => auth.logout(),
+    };
+  }, [current, ready]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

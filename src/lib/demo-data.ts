@@ -13,6 +13,9 @@ export const STAGES = [
 ] as const;
 export type Stage = (typeof STAGES)[number] | "declined" | "cancelled" | "defaulted";
 
+/** Deals that are over. Everything else is "in progress", on the Deals page and on Home. */
+export const CLOSED_STAGES: readonly Stage[] = ["declined", "cancelled", "paid_off"];
+
 export const STAGE_LABEL: Record<Stage, string> = {
   inquiry: "Inquiry", test_drive: "Test drive", application: "Application",
   negotiation: "Negotiation", inspection: "Inspection", contract: "Contract",
@@ -27,6 +30,7 @@ export type DemoDeal = {
   state?: string;
   minDownPct?: number;
   allowedTerms?: number[];
+  vehicleId?: string;
 };
 
 export const DEALS: DemoDeal[] = [
@@ -66,12 +70,93 @@ const ACTION: Record<Stage, string> = {
   declined: "No action — deal closed", cancelled: "No action — deal closed", defaulted: "OwnerFi is reviewing the case",
 };
 
-export function getNextAction(d: DemoDeal, role: Role): { who: Who; text: string } {
-  const a = ACTOR[d.stage];
-  if (a === "none") return { who: "none", text: ACTION[d.stage] };
-  if (a === "ownerfi") return { who: role === "admin" ? "you" : "ownerfi", text: ACTION[d.stage] };
-  if (role === "admin") return { who: "other", text: `${a === "seller" ? d.seller : d.buyer}: ${ACTION[d.stage].toLowerCase()}` };
-  return a === role ? { who: "you", text: ACTION[d.stage] } : { who: "other", text: `Waiting for the ${a} to ${ACTION[d.stage].toLowerCase()}` };
+export type NextAction = {
+  who: Who;
+  text: string;
+  /** Short button label for the person whose turn it is. */
+  label: string;
+  /** Where the button goes. */
+  href: string;
+  tone: "primary" | "neutral" | "warning" | "danger" | "success";
+  /** Whose turn it is: the viewer, the other person, or the system (payments, admin). */
+  waitingOn: "you" | "other" | "system";
+};
+
+type Detail = {
+  testDrive?: { status: string } | undefined;
+  counterOffer?: { proposedBy: "seller" | "buyer" } | undefined;
+  offers?: { by: "buyer" | "seller"; status: string }[] | undefined;
+  inspectionBooking?: { status: "requested" | "approved" } | undefined;
+  contract?: { sellerSigned: boolean; buyerSigned: boolean } | undefined;
+  payment?: { status?: string | undefined } | undefined;
+  closing?: { sellerConfirmed?: boolean | undefined; buyerConfirmed?: boolean | undefined } | undefined;
+  lien?: { releasedAt?: string | undefined } | undefined;
+};
+
+/**
+ * What happens next on a deal, from the viewer's side. `detail` sharpens the answer inside a stage
+ * (who made the last offer, who has signed). Without it the answer follows the stage alone.
+ */
+export function getNextAction(d: DemoDeal, role: Role, detail?: Detail): NextAction {
+  const buyer = d.buyer.split(" ")[0] ?? "the buyer";
+  const seller = d.seller.split(" ")[0] ?? "the seller";
+  const room = role === "admin" ? `/deals/${d.id}?as=admin` : `/deals/${d.id}?as=${role}`;
+  const mk = (who: Who, text: string, label: string, tone: NextAction["tone"], href = room): NextAction => ({
+    who,
+    text,
+    label,
+    href,
+    tone,
+    waitingOn: who === "you" ? "you" : who === "other" ? "other" : "system",
+  });
+  const you = (text: string, label = text, tone: NextAction["tone"] = "primary", href?: string) => mk("you", text, label, tone, href);
+  const wait = (text: string, tone: NextAction["tone"] = "neutral") => mk("other", text, text, tone);
+  if (role === "admin") {
+    const a = ACTOR[d.stage];
+    if (a === "none") return mk("none", ACTION[d.stage], "", "neutral");
+    if (a === "ownerfi") return mk("you", ACTION[d.stage], ACTION[d.stage], "warning");
+    return mk("other", `${a === "seller" ? d.seller : d.buyer}: ${ACTION[d.stage].toLowerCase()}`, "", "neutral");
+  }
+  const me = role;
+  const other = me === "buyer" ? seller : buyer;
+  const sellerTurn = (text: string) => (me === "seller" ? you(text) : wait(`Waiting for ${seller}: ${text.toLowerCase()}`));
+  const buyerTurn = (text: string, tone: NextAction["tone"] = "primary", href?: string) => (me === "buyer" ? you(text, text, tone, href) : wait(`Waiting for ${buyer}: ${text.toLowerCase()}`));
+  switch (d.stage) {
+    case "inquiry":
+      return sellerTurn("Reply to the question");
+    case "test_drive":
+      return sellerTurn(detail?.testDrive?.status === "confirmed" ? "Mark the test drive as done" : "Confirm the test drive time");
+    case "application":
+    case "negotiation": {
+      const last = detail?.offers?.filter((o) => o.status === "current").pop()?.by ?? detail?.counterOffer?.proposedBy ?? "buyer";
+      return last === "buyer" ? sellerTurn("Answer the offer") : buyerTurn("Answer the counter-offer");
+    }
+    case "inspection": {
+      const b = detail?.inspectionBooking;
+      if (!b) return buyerTurn("Book your inspection");
+      if (b.status === "requested") return sellerTurn("Approve the inspection time");
+      return buyerTurn("Read the report and decide");
+    }
+    case "contract": {
+      const mine = me === "seller" ? detail?.contract?.sellerSigned : detail?.contract?.buyerSigned;
+      return mine ? wait(`Waiting for ${other} to sign`) : you("Sign the contract");
+    }
+    case "down_payment":
+      return buyerTurn(detail?.payment?.status === "failed" ? "Try the down payment again" : "Pay the down payment", detail?.payment?.status === "failed" ? "danger" : "primary");
+    case "closing": {
+      const mine = me === "seller" ? detail?.closing?.sellerConfirmed : detail?.closing?.buyerConfirmed;
+      return mine ? wait(`Waiting for ${other} to confirm the title transfer`) : you("Confirm the title transfer");
+    }
+    case "active":
+      return me === "buyer" ? you("Make this month’s payment", "Pay this month", d.late ? "danger" : "primary", "/buyer/payments") : mk("ownerfi", d.late ? "A payment is late" : "Payments are on schedule", d.late ? "See your options" : "See payments", d.late ? "warning" : "success", d.late ? `/seller/deals/${d.id}/default-options` : "/seller/payments");
+    case "paid_off":
+      if (detail?.lien?.releasedAt) return mk("none", "Lien released. The title is clear.", "", "success");
+      return me === "seller" ? you("Release the lien", "Release the lien", "success") : mk("ownerfi", "Paid off. The seller releases the lien.", "", "success");
+    case "defaulted":
+      return mk("ownerfi", ACTION.defaulted, "", "danger");
+    default:
+      return mk("none", ACTION[d.stage], "", "neutral");
+  }
 }
 
 export const VERIFICATION_QUEUE = [

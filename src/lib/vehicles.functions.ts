@@ -13,7 +13,8 @@ function publicClient() {
         if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`)
           h.delete("Authorization");
         h.set("apikey", key);
-        return fetch(input, { ...init, headers: h });
+        // Fail fast if the backend is down or paused, instead of leaving the page waiting forever.
+        return fetch(input, { ...init, headers: h, signal: init?.signal ?? AbortSignal.timeout(6000) });
       },
     },
   });

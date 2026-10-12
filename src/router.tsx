@@ -3,13 +3,20 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      // Data stays fresh for a minute, so going back to a page doesn't wait on the network again.
+      queries: { staleTime: 60_000, gcTime: 10 * 60_000, refetchOnWindowFocus: false },
+    },
+  });
 
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    // Hovering or touching a link loads its data early, and that data is reused for a bit.
+    defaultPreload: "intent",
+    defaultPreloadStaleTime: 30_000,
   });
 
   return router;

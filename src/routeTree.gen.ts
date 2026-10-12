@@ -11,14 +11,104 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as NoAccessRouteImport } from './routes/no-access'
 import { Route as SellerRouteImport } from './routes/seller'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAccountRouteImport } from './routes/admin.account'
+import { Route as AdminAdvertisingRouteImport } from './routes/admin.advertising'
+import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
+import { Route as AdminClosedDealsRouteImport } from './routes/admin.closed-deals'
+import { Route as AdminDealsRouteImport } from './routes/admin.deals'
+import { Route as AdminIntegrationsRouteImport } from './routes/admin.integrations'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
+import { Route as AdminRevenueRouteImport } from './routes/admin.revenue'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSupportRouteImport } from './routes/admin.support'
+import { Route as AdminTestDrivesRouteImport } from './routes/admin.test-drives'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
+import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
+import { Route as Auth2faRouteImport } from './routes/auth.2fa'
+import { Route as AuthForgotRouteImport } from './routes/auth.forgot'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthSignupRouteImport } from './routes/auth.signup'
+import { Route as AuthSuspendedRouteImport } from './routes/auth.suspended'
+import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as BuyerIndexRouteImport } from './routes/buyer.index'
+import { Route as BuyerAccountRouteImport } from './routes/buyer.account'
+import { Route as BuyerDealsRouteImport } from './routes/buyer.deals'
+import { Route as BuyerInboxRouteImport } from './routes/buyer.inbox'
+import { Route as BuyerNotificationsRouteImport } from './routes/buyer.notifications'
+import { Route as BuyerPaymentsRouteImport } from './routes/buyer.payments'
+import { Route as BuyerSavedRouteImport } from './routes/buyer.saved'
+import { Route as BuyerTestDrivesRouteImport } from './routes/buyer.test-drives'
+import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as DemoInboxRouteImport } from './routes/demo.inbox'
+import { Route as DocsTokenRouteImport } from './routes/docs.$token'
 import { Route as SellerIndexRouteImport } from './routes/seller.index'
+import { Route as SellerAccountRouteImport } from './routes/seller.account'
+import { Route as SellerDealsRouteImport } from './routes/seller.deals'
+import { Route as SellerInboxRouteImport } from './routes/seller.inbox'
+import { Route as SellerNotificationsRouteImport } from './routes/seller.notifications'
+import { Route as SellerOnboardingRouteImport } from './routes/seller.onboarding'
+import { Route as SellerPaymentsRouteImport } from './routes/seller.payments'
+import { Route as SellerTestDrivesRouteImport } from './routes/seller.test-drives'
+import { Route as SellerVehiclesRouteImport } from './routes/seller.vehicles'
+import { Route as AdminAccountIndexRouteImport } from './routes/admin.account.index'
+import { Route as AdminAccountSectionRouteImport } from './routes/admin.account.$section'
+import { Route as AdminAdvertisingIndexRouteImport } from './routes/admin.advertising.index'
+import { Route as AdminAdvertisingPartnerIdRouteImport } from './routes/admin.advertising.$partnerId'
+import { Route as AdminDealsIndexRouteImport } from './routes/admin.deals.index'
+import { Route as AdminDealsIdRouteImport } from './routes/admin.deals.$id'
+import { Route as AdminIntegrationsIndexRouteImport } from './routes/admin.integrations.index'
+import { Route as AdminIntegrationsIdRouteImport } from './routes/admin.integrations.$id'
+import { Route as AdminSettingsIndexRouteImport } from './routes/admin.settings.index'
+import { Route as AdminSettingsTabRouteImport } from './routes/admin.settings.$tab'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin.users.index'
+import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
+import { Route as AdminVehiclesIndexRouteImport } from './routes/admin.vehicles.index'
+import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
+import { Route as AuthResetTokenRouteImport } from './routes/auth.reset.$token'
+import { Route as BuyerAccountIndexRouteImport } from './routes/buyer.account.index'
+import { Route as BuyerAccountSectionRouteImport } from './routes/buyer.account.$section'
+import { Route as BuyerDealsIndexRouteImport } from './routes/buyer.deals.index'
+import { Route as BuyerDealsDealIdRouteImport } from './routes/buyer.deals.$dealId'
+import { Route as BuyerInboxIndexRouteImport } from './routes/buyer.inbox.index'
+import { Route as BuyerInboxThreadIdRouteImport } from './routes/buyer.inbox.$threadId'
+import { Route as BuyerVerificationIndexRouteImport } from './routes/buyer.verification.index'
+import { Route as BuyerVerificationStepRouteImport } from './routes/buyer.verification.$step'
+import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
+import { Route as CarsIdOfferRouteImport } from './routes/cars.$id.offer'
+import { Route as SellerAccountIndexRouteImport } from './routes/seller.account.index'
+import { Route as SellerAccountSectionRouteImport } from './routes/seller.account.$section'
+import { Route as SellerDealsIndexRouteImport } from './routes/seller.deals.index'
+import { Route as SellerDealsDealIdRouteImport } from './routes/seller.deals.$dealId'
+import { Route as SellerInboxIndexRouteImport } from './routes/seller.inbox.index'
+import { Route as SellerInboxThreadIdRouteImport } from './routes/seller.inbox.$threadId'
+import { Route as SellerOnboardingIndexRouteImport } from './routes/seller.onboarding.index'
+import { Route as SellerOnboardingIdentityRouteImport } from './routes/seller.onboarding.identity'
+import { Route as SellerOnboardingPayoutsRouteImport } from './routes/seller.onboarding.payouts'
+import { Route as SellerTestDrivesIndexRouteImport } from './routes/seller.test-drives.index'
+import { Route as SellerTestDrivesAvailabilityRouteImport } from './routes/seller.test-drives.availability'
+import { Route as SellerVehiclesIndexRouteImport } from './routes/seller.vehicles.index'
+import { Route as SellerVehiclesIdRouteImport } from './routes/seller.vehicles.$id'
 import { Route as SellerVehiclesNewRouteImport } from './routes/seller.vehicles.new'
+import { Route as BuyerDealsDealIdIndexRouteImport } from './routes/buyer.deals.$dealId.index'
+import { Route as BuyerDealsDealIdPayoffRouteImport } from './routes/buyer.deals.$dealId.payoff'
+import { Route as SellerDealsDealIdIndexRouteImport } from './routes/seller.deals.$dealId.index'
+import { Route as SellerDealsDealIdDefaultOptionsRouteImport } from './routes/seller.deals.$dealId.default-options'
+import { Route as SellerVehiclesIdIndexRouteImport } from './routes/seller.vehicles.$id.index'
+import { Route as SellerVehiclesIdAdvertiseRouteImport } from './routes/seller.vehicles.$id.advertise'
+import { Route as SellerVehiclesNewIndexRouteImport } from './routes/seller.vehicles.new.index'
+import { Route as SellerVehiclesNewStepRouteImport } from './routes/seller.vehicles.new.$step'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,6 +118,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerRoute = BuyerRouteImport.update({
@@ -40,10 +135,175 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NoAccessRoute = NoAccessRouteImport.update({
+  id: '/no-access',
+  path: '/no-access',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellerRoute = SellerRouteImport.update({
   id: '/seller',
   path: '/seller',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAccountRoute = AdminAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdvertisingRoute = AdminAdvertisingRouteImport.update({
+  id: '/advertising',
+  path: '/advertising',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClosedDealsRoute = AdminClosedDealsRouteImport.update({
+  id: '/closed-deals',
+  path: '/closed-deals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDealsRoute = AdminDealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminIntegrationsRoute = AdminIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRevenueRoute = AdminRevenueRouteImport.update({
+  id: '/revenue',
+  path: '/revenue',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTestDrivesRoute = AdminTestDrivesRouteImport.update({
+  id: '/test-drives',
+  path: '/test-drives',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/verifications',
+  path: '/verifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const Auth2faRoute = Auth2faRouteImport.update({
+  id: '/2fa',
+  path: '/2fa',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthForgotRoute = AuthForgotRouteImport.update({
+  id: '/forgot',
+  path: '/forgot',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSuspendedRoute = AuthSuspendedRouteImport.update({
+  id: '/suspended',
+  path: '/suspended',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthVerifyRoute = AuthVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AuthRoute,
+} as any)
+const BuyerIndexRoute = BuyerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerAccountRoute = BuyerAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerDealsRoute = BuyerDealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerInboxRoute = BuyerInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerNotificationsRoute = BuyerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerPaymentsRoute = BuyerPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerSavedRoute = BuyerSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerTestDrivesRoute = BuyerTestDrivesRouteImport.update({
+  id: '/test-drives',
+  path: '/test-drives',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
+  getParentRoute: () => BuyerRoute,
 } as any)
 const CarsIndexRoute = CarsIndexRouteImport.update({
   id: '/cars/',
@@ -60,99 +320,881 @@ const DealsIdRoute = DealsIdRouteImport.update({
   path: '/deals/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoInboxRoute = DemoInboxRouteImport.update({
+  id: '/demo/inbox',
+  path: '/demo/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsTokenRoute = DocsTokenRouteImport.update({
+  id: '/docs/$token',
+  path: '/docs/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellerIndexRoute = SellerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SellerRoute,
 } as any)
-const SellerVehiclesNewRoute = SellerVehiclesNewRouteImport.update({
-  id: '/vehicles/new',
-  path: '/vehicles/new',
+const SellerAccountRoute = SellerAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => SellerRoute,
+} as any)
+const SellerDealsRoute = SellerDealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerInboxRoute = SellerInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerNotificationsRoute = SellerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerOnboardingRoute = SellerOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerPaymentsRoute = SellerPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerTestDrivesRoute = SellerTestDrivesRouteImport.update({
+  id: '/test-drives',
+  path: '/test-drives',
+  getParentRoute: () => SellerRoute,
+} as any)
+const SellerVehiclesRoute = SellerVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => SellerRoute,
+} as any)
+const AdminAccountIndexRoute = AdminAccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAccountRoute,
+} as any)
+const AdminAccountSectionRoute = AdminAccountSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => AdminAccountRoute,
+} as any)
+const AdminAdvertisingIndexRoute = AdminAdvertisingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAdvertisingRoute,
+} as any)
+const AdminAdvertisingPartnerIdRoute =
+  AdminAdvertisingPartnerIdRouteImport.update({
+    id: '/$partnerId',
+    path: '/$partnerId',
+    getParentRoute: () => AdminAdvertisingRoute,
+  } as any)
+const AdminDealsIndexRoute = AdminDealsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminDealsRoute,
+} as any)
+const AdminDealsIdRoute = AdminDealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminDealsRoute,
+} as any)
+const AdminIntegrationsIndexRoute = AdminIntegrationsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminIntegrationsRoute,
+} as any)
+const AdminIntegrationsIdRoute = AdminIntegrationsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminIntegrationsRoute,
+} as any)
+const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminSettingsRoute,
+} as any)
+const AdminSettingsTabRoute = AdminSettingsTabRouteImport.update({
+  id: '/$tab',
+  path: '/$tab',
+  getParentRoute: () => AdminSettingsRoute,
+} as any)
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
+const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
+const AdminVehiclesIndexRoute = AdminVehiclesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AuthResetTokenRoute = AuthResetTokenRouteImport.update({
+  id: '/reset/$token',
+  path: '/reset/$token',
+  getParentRoute: () => AuthRoute,
+} as any)
+const BuyerAccountIndexRoute = BuyerAccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerAccountRoute,
+} as any)
+const BuyerAccountSectionRoute = BuyerAccountSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => BuyerAccountRoute,
+} as any)
+const BuyerDealsIndexRoute = BuyerDealsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerDealsRoute,
+} as any)
+const BuyerDealsDealIdRoute = BuyerDealsDealIdRouteImport.update({
+  id: '/$dealId',
+  path: '/$dealId',
+  getParentRoute: () => BuyerDealsRoute,
+} as any)
+const BuyerInboxIndexRoute = BuyerInboxIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerInboxRoute,
+} as any)
+const BuyerInboxThreadIdRoute = BuyerInboxThreadIdRouteImport.update({
+  id: '/$threadId',
+  path: '/$threadId',
+  getParentRoute: () => BuyerInboxRoute,
+} as any)
+const BuyerVerificationIndexRoute = BuyerVerificationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerVerificationRoute,
+} as any)
+const BuyerVerificationStepRoute = BuyerVerificationStepRouteImport.update({
+  id: '/$step',
+  path: '/$step',
+  getParentRoute: () => BuyerVerificationRoute,
+} as any)
+const CarsIdIndexRoute = CarsIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CarsIdRoute,
+} as any)
+const CarsIdOfferRoute = CarsIdOfferRouteImport.update({
+  id: '/offer',
+  path: '/offer',
+  getParentRoute: () => CarsIdRoute,
+} as any)
+const SellerAccountIndexRoute = SellerAccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerAccountRoute,
+} as any)
+const SellerAccountSectionRoute = SellerAccountSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => SellerAccountRoute,
+} as any)
+const SellerDealsIndexRoute = SellerDealsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerDealsRoute,
+} as any)
+const SellerDealsDealIdRoute = SellerDealsDealIdRouteImport.update({
+  id: '/$dealId',
+  path: '/$dealId',
+  getParentRoute: () => SellerDealsRoute,
+} as any)
+const SellerInboxIndexRoute = SellerInboxIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerInboxRoute,
+} as any)
+const SellerInboxThreadIdRoute = SellerInboxThreadIdRouteImport.update({
+  id: '/$threadId',
+  path: '/$threadId',
+  getParentRoute: () => SellerInboxRoute,
+} as any)
+const SellerOnboardingIndexRoute = SellerOnboardingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerOnboardingRoute,
+} as any)
+const SellerOnboardingIdentityRoute =
+  SellerOnboardingIdentityRouteImport.update({
+    id: '/identity',
+    path: '/identity',
+    getParentRoute: () => SellerOnboardingRoute,
+  } as any)
+const SellerOnboardingPayoutsRoute = SellerOnboardingPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => SellerOnboardingRoute,
+} as any)
+const SellerTestDrivesIndexRoute = SellerTestDrivesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerTestDrivesRoute,
+} as any)
+const SellerTestDrivesAvailabilityRoute =
+  SellerTestDrivesAvailabilityRouteImport.update({
+    id: '/availability',
+    path: '/availability',
+    getParentRoute: () => SellerTestDrivesRoute,
+  } as any)
+const SellerVehiclesIndexRoute = SellerVehiclesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerVehiclesRoute,
+} as any)
+const SellerVehiclesIdRoute = SellerVehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => SellerVehiclesRoute,
+} as any)
+const SellerVehiclesNewRoute = SellerVehiclesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => SellerVehiclesRoute,
+} as any)
+const BuyerDealsDealIdIndexRoute = BuyerDealsDealIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerDealsDealIdRoute,
+} as any)
+const BuyerDealsDealIdPayoffRoute = BuyerDealsDealIdPayoffRouteImport.update({
+  id: '/payoff',
+  path: '/payoff',
+  getParentRoute: () => BuyerDealsDealIdRoute,
+} as any)
+const SellerDealsDealIdIndexRoute = SellerDealsDealIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerDealsDealIdRoute,
+} as any)
+const SellerDealsDealIdDefaultOptionsRoute =
+  SellerDealsDealIdDefaultOptionsRouteImport.update({
+    id: '/default-options',
+    path: '/default-options',
+    getParentRoute: () => SellerDealsDealIdRoute,
+  } as any)
+const SellerVehiclesIdIndexRoute = SellerVehiclesIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerVehiclesIdRoute,
+} as any)
+const SellerVehiclesIdAdvertiseRoute =
+  SellerVehiclesIdAdvertiseRouteImport.update({
+    id: '/advertise',
+    path: '/advertise',
+    getParentRoute: () => SellerVehiclesIdRoute,
+  } as any)
+const SellerVehiclesNewIndexRoute = SellerVehiclesNewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerVehiclesNewRoute,
+} as any)
+const SellerVehiclesNewStepRoute = SellerVehiclesNewStepRouteImport.update({
+  id: '/$step',
+  path: '/$step',
+  getParentRoute: () => SellerVehiclesNewRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/buyer': typeof BuyerRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/buyer': typeof BuyerRouteWithChildren
   '/login': typeof LoginRoute
+  '/no-access': typeof NoAccessRoute
   '/seller': typeof SellerRouteWithChildren
-  '/cars/$id': typeof CarsIdRoute
+  '/signup': typeof SignupRoute
+  '/admin/account': typeof AdminAccountRouteWithChildren
+  '/admin/advertising': typeof AdminAdvertisingRouteWithChildren
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/closed-deals': typeof AdminClosedDealsRoute
+  '/admin/deals': typeof AdminDealsRouteWithChildren
+  '/admin/integrations': typeof AdminIntegrationsRouteWithChildren
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/revenue': typeof AdminRevenueRoute
+  '/admin/settings': typeof AdminSettingsRouteWithChildren
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/test-drives': typeof AdminTestDrivesRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
+  '/admin/verifications': typeof AdminVerificationsRoute
+  '/auth/2fa': typeof Auth2faRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/suspended': typeof AuthSuspendedRoute
+  '/auth/verify': typeof AuthVerifyRoute
+  '/buyer/account': typeof BuyerAccountRouteWithChildren
+  '/buyer/deals': typeof BuyerDealsRouteWithChildren
+  '/buyer/inbox': typeof BuyerInboxRouteWithChildren
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/payments': typeof BuyerPaymentsRoute
+  '/buyer/saved': typeof BuyerSavedRoute
+  '/buyer/test-drives': typeof BuyerTestDrivesRoute
+  '/buyer/verification': typeof BuyerVerificationRouteWithChildren
+  '/cars/$id': typeof CarsIdRouteWithChildren
   '/deals/$id': typeof DealsIdRoute
+  '/demo/inbox': typeof DemoInboxRoute
+  '/docs/$token': typeof DocsTokenRoute
+  '/seller/account': typeof SellerAccountRouteWithChildren
+  '/seller/deals': typeof SellerDealsRouteWithChildren
+  '/seller/inbox': typeof SellerInboxRouteWithChildren
+  '/seller/notifications': typeof SellerNotificationsRoute
+  '/seller/onboarding': typeof SellerOnboardingRouteWithChildren
+  '/seller/payments': typeof SellerPaymentsRoute
+  '/seller/test-drives': typeof SellerTestDrivesRouteWithChildren
+  '/seller/vehicles': typeof SellerVehiclesRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/buyer/': typeof BuyerIndexRoute
   '/cars/': typeof CarsIndexRoute
   '/seller/': typeof SellerIndexRoute
-  '/seller/vehicles/new': typeof SellerVehiclesNewRoute
+  '/admin/account/$section': typeof AdminAccountSectionRoute
+  '/admin/advertising/$partnerId': typeof AdminAdvertisingPartnerIdRoute
+  '/admin/deals/$id': typeof AdminDealsIdRoute
+  '/admin/integrations/$id': typeof AdminIntegrationsIdRoute
+  '/admin/settings/$tab': typeof AdminSettingsTabRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/auth/reset/$token': typeof AuthResetTokenRoute
+  '/buyer/account/$section': typeof BuyerAccountSectionRoute
+  '/buyer/deals/$dealId': typeof BuyerDealsDealIdRouteWithChildren
+  '/buyer/inbox/$threadId': typeof BuyerInboxThreadIdRoute
+  '/buyer/verification/$step': typeof BuyerVerificationStepRoute
+  '/cars/$id/offer': typeof CarsIdOfferRoute
+  '/seller/account/$section': typeof SellerAccountSectionRoute
+  '/seller/deals/$dealId': typeof SellerDealsDealIdRouteWithChildren
+  '/seller/inbox/$threadId': typeof SellerInboxThreadIdRoute
+  '/seller/onboarding/identity': typeof SellerOnboardingIdentityRoute
+  '/seller/onboarding/payouts': typeof SellerOnboardingPayoutsRoute
+  '/seller/test-drives/availability': typeof SellerTestDrivesAvailabilityRoute
+  '/seller/vehicles/$id': typeof SellerVehiclesIdRouteWithChildren
+  '/seller/vehicles/new': typeof SellerVehiclesNewRouteWithChildren
+  '/admin/account/': typeof AdminAccountIndexRoute
+  '/admin/advertising/': typeof AdminAdvertisingIndexRoute
+  '/admin/deals/': typeof AdminDealsIndexRoute
+  '/admin/integrations/': typeof AdminIntegrationsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/vehicles/': typeof AdminVehiclesIndexRoute
+  '/buyer/account/': typeof BuyerAccountIndexRoute
+  '/buyer/deals/': typeof BuyerDealsIndexRoute
+  '/buyer/inbox/': typeof BuyerInboxIndexRoute
+  '/buyer/verification/': typeof BuyerVerificationIndexRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
+  '/seller/account/': typeof SellerAccountIndexRoute
+  '/seller/deals/': typeof SellerDealsIndexRoute
+  '/seller/inbox/': typeof SellerInboxIndexRoute
+  '/seller/onboarding/': typeof SellerOnboardingIndexRoute
+  '/seller/test-drives/': typeof SellerTestDrivesIndexRoute
+  '/seller/vehicles/': typeof SellerVehiclesIndexRoute
+  '/buyer/deals/$dealId/payoff': typeof BuyerDealsDealIdPayoffRoute
+  '/seller/deals/$dealId/default-options': typeof SellerDealsDealIdDefaultOptionsRoute
+  '/seller/vehicles/$id/advertise': typeof SellerVehiclesIdAdvertiseRoute
+  '/seller/vehicles/new/$step': typeof SellerVehiclesNewStepRoute
+  '/buyer/deals/$dealId/': typeof BuyerDealsDealIdIndexRoute
+  '/seller/deals/$dealId/': typeof SellerDealsDealIdIndexRoute
+  '/seller/vehicles/$id/': typeof SellerVehiclesIdIndexRoute
+  '/seller/vehicles/new/': typeof SellerVehiclesNewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/buyer': typeof BuyerRoute
+  '/auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/cars/$id': typeof CarsIdRoute
+  '/no-access': typeof NoAccessRoute
+  '/signup': typeof SignupRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/closed-deals': typeof AdminClosedDealsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/revenue': typeof AdminRevenueRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/test-drives': typeof AdminTestDrivesRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
+  '/auth/2fa': typeof Auth2faRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/suspended': typeof AuthSuspendedRoute
+  '/auth/verify': typeof AuthVerifyRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/payments': typeof BuyerPaymentsRoute
+  '/buyer/saved': typeof BuyerSavedRoute
+  '/buyer/test-drives': typeof BuyerTestDrivesRoute
   '/deals/$id': typeof DealsIdRoute
+  '/demo/inbox': typeof DemoInboxRoute
+  '/docs/$token': typeof DocsTokenRoute
+  '/seller/notifications': typeof SellerNotificationsRoute
+  '/seller/payments': typeof SellerPaymentsRoute
+  '/admin': typeof AdminIndexRoute
+  '/buyer': typeof BuyerIndexRoute
   '/cars': typeof CarsIndexRoute
   '/seller': typeof SellerIndexRoute
-  '/seller/vehicles/new': typeof SellerVehiclesNewRoute
+  '/admin/account/$section': typeof AdminAccountSectionRoute
+  '/admin/advertising/$partnerId': typeof AdminAdvertisingPartnerIdRoute
+  '/admin/deals/$id': typeof AdminDealsIdRoute
+  '/admin/integrations/$id': typeof AdminIntegrationsIdRoute
+  '/admin/settings/$tab': typeof AdminSettingsTabRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/auth/reset/$token': typeof AuthResetTokenRoute
+  '/buyer/account/$section': typeof BuyerAccountSectionRoute
+  '/buyer/inbox/$threadId': typeof BuyerInboxThreadIdRoute
+  '/buyer/verification/$step': typeof BuyerVerificationStepRoute
+  '/cars/$id/offer': typeof CarsIdOfferRoute
+  '/seller/account/$section': typeof SellerAccountSectionRoute
+  '/seller/inbox/$threadId': typeof SellerInboxThreadIdRoute
+  '/seller/onboarding/identity': typeof SellerOnboardingIdentityRoute
+  '/seller/onboarding/payouts': typeof SellerOnboardingPayoutsRoute
+  '/seller/test-drives/availability': typeof SellerTestDrivesAvailabilityRoute
+  '/admin/account': typeof AdminAccountIndexRoute
+  '/admin/advertising': typeof AdminAdvertisingIndexRoute
+  '/admin/deals': typeof AdminDealsIndexRoute
+  '/admin/integrations': typeof AdminIntegrationsIndexRoute
+  '/admin/settings': typeof AdminSettingsIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/vehicles': typeof AdminVehiclesIndexRoute
+  '/buyer/account': typeof BuyerAccountIndexRoute
+  '/buyer/deals': typeof BuyerDealsIndexRoute
+  '/buyer/inbox': typeof BuyerInboxIndexRoute
+  '/buyer/verification': typeof BuyerVerificationIndexRoute
+  '/cars/$id': typeof CarsIdIndexRoute
+  '/seller/account': typeof SellerAccountIndexRoute
+  '/seller/deals': typeof SellerDealsIndexRoute
+  '/seller/inbox': typeof SellerInboxIndexRoute
+  '/seller/onboarding': typeof SellerOnboardingIndexRoute
+  '/seller/test-drives': typeof SellerTestDrivesIndexRoute
+  '/seller/vehicles': typeof SellerVehiclesIndexRoute
+  '/buyer/deals/$dealId/payoff': typeof BuyerDealsDealIdPayoffRoute
+  '/seller/deals/$dealId/default-options': typeof SellerDealsDealIdDefaultOptionsRoute
+  '/seller/vehicles/$id/advertise': typeof SellerVehiclesIdAdvertiseRoute
+  '/seller/vehicles/new/$step': typeof SellerVehiclesNewStepRoute
+  '/buyer/deals/$dealId': typeof BuyerDealsDealIdIndexRoute
+  '/seller/deals/$dealId': typeof SellerDealsDealIdIndexRoute
+  '/seller/vehicles/$id': typeof SellerVehiclesIdIndexRoute
+  '/seller/vehicles/new': typeof SellerVehiclesNewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/buyer': typeof BuyerRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/buyer': typeof BuyerRouteWithChildren
   '/login': typeof LoginRoute
+  '/no-access': typeof NoAccessRoute
   '/seller': typeof SellerRouteWithChildren
-  '/cars/$id': typeof CarsIdRoute
+  '/signup': typeof SignupRoute
+  '/admin/account': typeof AdminAccountRouteWithChildren
+  '/admin/advertising': typeof AdminAdvertisingRouteWithChildren
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/closed-deals': typeof AdminClosedDealsRoute
+  '/admin/deals': typeof AdminDealsRouteWithChildren
+  '/admin/integrations': typeof AdminIntegrationsRouteWithChildren
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/revenue': typeof AdminRevenueRoute
+  '/admin/settings': typeof AdminSettingsRouteWithChildren
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/test-drives': typeof AdminTestDrivesRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
+  '/admin/verifications': typeof AdminVerificationsRoute
+  '/auth/2fa': typeof Auth2faRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/suspended': typeof AuthSuspendedRoute
+  '/auth/verify': typeof AuthVerifyRoute
+  '/buyer/account': typeof BuyerAccountRouteWithChildren
+  '/buyer/deals': typeof BuyerDealsRouteWithChildren
+  '/buyer/inbox': typeof BuyerInboxRouteWithChildren
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/payments': typeof BuyerPaymentsRoute
+  '/buyer/saved': typeof BuyerSavedRoute
+  '/buyer/test-drives': typeof BuyerTestDrivesRoute
+  '/buyer/verification': typeof BuyerVerificationRouteWithChildren
+  '/cars/$id': typeof CarsIdRouteWithChildren
   '/deals/$id': typeof DealsIdRoute
+  '/demo/inbox': typeof DemoInboxRoute
+  '/docs/$token': typeof DocsTokenRoute
+  '/seller/account': typeof SellerAccountRouteWithChildren
+  '/seller/deals': typeof SellerDealsRouteWithChildren
+  '/seller/inbox': typeof SellerInboxRouteWithChildren
+  '/seller/notifications': typeof SellerNotificationsRoute
+  '/seller/onboarding': typeof SellerOnboardingRouteWithChildren
+  '/seller/payments': typeof SellerPaymentsRoute
+  '/seller/test-drives': typeof SellerTestDrivesRouteWithChildren
+  '/seller/vehicles': typeof SellerVehiclesRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/buyer/': typeof BuyerIndexRoute
   '/cars/': typeof CarsIndexRoute
   '/seller/': typeof SellerIndexRoute
-  '/seller/vehicles/new': typeof SellerVehiclesNewRoute
+  '/admin/account/$section': typeof AdminAccountSectionRoute
+  '/admin/advertising/$partnerId': typeof AdminAdvertisingPartnerIdRoute
+  '/admin/deals/$id': typeof AdminDealsIdRoute
+  '/admin/integrations/$id': typeof AdminIntegrationsIdRoute
+  '/admin/settings/$tab': typeof AdminSettingsTabRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/auth/reset/$token': typeof AuthResetTokenRoute
+  '/buyer/account/$section': typeof BuyerAccountSectionRoute
+  '/buyer/deals/$dealId': typeof BuyerDealsDealIdRouteWithChildren
+  '/buyer/inbox/$threadId': typeof BuyerInboxThreadIdRoute
+  '/buyer/verification/$step': typeof BuyerVerificationStepRoute
+  '/cars/$id/offer': typeof CarsIdOfferRoute
+  '/seller/account/$section': typeof SellerAccountSectionRoute
+  '/seller/deals/$dealId': typeof SellerDealsDealIdRouteWithChildren
+  '/seller/inbox/$threadId': typeof SellerInboxThreadIdRoute
+  '/seller/onboarding/identity': typeof SellerOnboardingIdentityRoute
+  '/seller/onboarding/payouts': typeof SellerOnboardingPayoutsRoute
+  '/seller/test-drives/availability': typeof SellerTestDrivesAvailabilityRoute
+  '/seller/vehicles/$id': typeof SellerVehiclesIdRouteWithChildren
+  '/seller/vehicles/new': typeof SellerVehiclesNewRouteWithChildren
+  '/admin/account/': typeof AdminAccountIndexRoute
+  '/admin/advertising/': typeof AdminAdvertisingIndexRoute
+  '/admin/deals/': typeof AdminDealsIndexRoute
+  '/admin/integrations/': typeof AdminIntegrationsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/vehicles/': typeof AdminVehiclesIndexRoute
+  '/buyer/account/': typeof BuyerAccountIndexRoute
+  '/buyer/deals/': typeof BuyerDealsIndexRoute
+  '/buyer/inbox/': typeof BuyerInboxIndexRoute
+  '/buyer/verification/': typeof BuyerVerificationIndexRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
+  '/seller/account/': typeof SellerAccountIndexRoute
+  '/seller/deals/': typeof SellerDealsIndexRoute
+  '/seller/inbox/': typeof SellerInboxIndexRoute
+  '/seller/onboarding/': typeof SellerOnboardingIndexRoute
+  '/seller/test-drives/': typeof SellerTestDrivesIndexRoute
+  '/seller/vehicles/': typeof SellerVehiclesIndexRoute
+  '/buyer/deals/$dealId/payoff': typeof BuyerDealsDealIdPayoffRoute
+  '/seller/deals/$dealId/default-options': typeof SellerDealsDealIdDefaultOptionsRoute
+  '/seller/vehicles/$id/advertise': typeof SellerVehiclesIdAdvertiseRoute
+  '/seller/vehicles/new/$step': typeof SellerVehiclesNewStepRoute
+  '/buyer/deals/$dealId/': typeof BuyerDealsDealIdIndexRoute
+  '/seller/deals/$dealId/': typeof SellerDealsDealIdIndexRoute
+  '/seller/vehicles/$id/': typeof SellerVehiclesIdIndexRoute
+  '/seller/vehicles/new/': typeof SellerVehiclesNewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
+    | '/auth'
     | '/buyer'
     | '/login'
+    | '/no-access'
     | '/seller'
+    | '/signup'
+    | '/admin/account'
+    | '/admin/advertising'
+    | '/admin/audit-log'
+    | '/admin/closed-deals'
+    | '/admin/deals'
+    | '/admin/integrations'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/revenue'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/test-drives'
+    | '/admin/users'
+    | '/admin/vehicles'
+    | '/admin/verifications'
+    | '/auth/2fa'
+    | '/auth/forgot'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/auth/suspended'
+    | '/auth/verify'
+    | '/buyer/account'
+    | '/buyer/deals'
+    | '/buyer/inbox'
+    | '/buyer/notifications'
+    | '/buyer/payments'
+    | '/buyer/saved'
+    | '/buyer/test-drives'
+    | '/buyer/verification'
     | '/cars/$id'
     | '/deals/$id'
+    | '/demo/inbox'
+    | '/docs/$token'
+    | '/seller/account'
+    | '/seller/deals'
+    | '/seller/inbox'
+    | '/seller/notifications'
+    | '/seller/onboarding'
+    | '/seller/payments'
+    | '/seller/test-drives'
+    | '/seller/vehicles'
+    | '/admin/'
+    | '/buyer/'
     | '/cars/'
     | '/seller/'
+    | '/admin/account/$section'
+    | '/admin/advertising/$partnerId'
+    | '/admin/deals/$id'
+    | '/admin/integrations/$id'
+    | '/admin/settings/$tab'
+    | '/admin/users/$id'
+    | '/admin/vehicles/$id'
+    | '/auth/reset/$token'
+    | '/buyer/account/$section'
+    | '/buyer/deals/$dealId'
+    | '/buyer/inbox/$threadId'
+    | '/buyer/verification/$step'
+    | '/cars/$id/offer'
+    | '/seller/account/$section'
+    | '/seller/deals/$dealId'
+    | '/seller/inbox/$threadId'
+    | '/seller/onboarding/identity'
+    | '/seller/onboarding/payouts'
+    | '/seller/test-drives/availability'
+    | '/seller/vehicles/$id'
     | '/seller/vehicles/new'
+    | '/admin/account/'
+    | '/admin/advertising/'
+    | '/admin/deals/'
+    | '/admin/integrations/'
+    | '/admin/settings/'
+    | '/admin/users/'
+    | '/admin/vehicles/'
+    | '/buyer/account/'
+    | '/buyer/deals/'
+    | '/buyer/inbox/'
+    | '/buyer/verification/'
+    | '/cars/$id/'
+    | '/seller/account/'
+    | '/seller/deals/'
+    | '/seller/inbox/'
+    | '/seller/onboarding/'
+    | '/seller/test-drives/'
+    | '/seller/vehicles/'
+    | '/buyer/deals/$dealId/payoff'
+    | '/seller/deals/$dealId/default-options'
+    | '/seller/vehicles/$id/advertise'
+    | '/seller/vehicles/new/$step'
+    | '/buyer/deals/$dealId/'
+    | '/seller/deals/$dealId/'
+    | '/seller/vehicles/$id/'
+    | '/seller/vehicles/new/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
+    | '/login'
+    | '/no-access'
+    | '/signup'
+    | '/admin/audit-log'
+    | '/admin/closed-deals'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/revenue'
+    | '/admin/support'
+    | '/admin/test-drives'
+    | '/admin/verifications'
+    | '/auth/2fa'
+    | '/auth/forgot'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/auth/suspended'
+    | '/auth/verify'
+    | '/buyer/notifications'
+    | '/buyer/payments'
+    | '/buyer/saved'
+    | '/buyer/test-drives'
+    | '/deals/$id'
+    | '/demo/inbox'
+    | '/docs/$token'
+    | '/seller/notifications'
+    | '/seller/payments'
     | '/admin'
     | '/buyer'
-    | '/login'
-    | '/cars/$id'
-    | '/deals/$id'
     | '/cars'
     | '/seller'
+    | '/admin/account/$section'
+    | '/admin/advertising/$partnerId'
+    | '/admin/deals/$id'
+    | '/admin/integrations/$id'
+    | '/admin/settings/$tab'
+    | '/admin/users/$id'
+    | '/admin/vehicles/$id'
+    | '/auth/reset/$token'
+    | '/buyer/account/$section'
+    | '/buyer/inbox/$threadId'
+    | '/buyer/verification/$step'
+    | '/cars/$id/offer'
+    | '/seller/account/$section'
+    | '/seller/inbox/$threadId'
+    | '/seller/onboarding/identity'
+    | '/seller/onboarding/payouts'
+    | '/seller/test-drives/availability'
+    | '/admin/account'
+    | '/admin/advertising'
+    | '/admin/deals'
+    | '/admin/integrations'
+    | '/admin/settings'
+    | '/admin/users'
+    | '/admin/vehicles'
+    | '/buyer/account'
+    | '/buyer/deals'
+    | '/buyer/inbox'
+    | '/buyer/verification'
+    | '/cars/$id'
+    | '/seller/account'
+    | '/seller/deals'
+    | '/seller/inbox'
+    | '/seller/onboarding'
+    | '/seller/test-drives'
+    | '/seller/vehicles'
+    | '/buyer/deals/$dealId/payoff'
+    | '/seller/deals/$dealId/default-options'
+    | '/seller/vehicles/$id/advertise'
+    | '/seller/vehicles/new/$step'
+    | '/buyer/deals/$dealId'
+    | '/seller/deals/$dealId'
+    | '/seller/vehicles/$id'
     | '/seller/vehicles/new'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/auth'
     | '/buyer'
     | '/login'
+    | '/no-access'
     | '/seller'
+    | '/signup'
+    | '/admin/account'
+    | '/admin/advertising'
+    | '/admin/audit-log'
+    | '/admin/closed-deals'
+    | '/admin/deals'
+    | '/admin/integrations'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/revenue'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/test-drives'
+    | '/admin/users'
+    | '/admin/vehicles'
+    | '/admin/verifications'
+    | '/auth/2fa'
+    | '/auth/forgot'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/auth/suspended'
+    | '/auth/verify'
+    | '/buyer/account'
+    | '/buyer/deals'
+    | '/buyer/inbox'
+    | '/buyer/notifications'
+    | '/buyer/payments'
+    | '/buyer/saved'
+    | '/buyer/test-drives'
+    | '/buyer/verification'
     | '/cars/$id'
     | '/deals/$id'
+    | '/demo/inbox'
+    | '/docs/$token'
+    | '/seller/account'
+    | '/seller/deals'
+    | '/seller/inbox'
+    | '/seller/notifications'
+    | '/seller/onboarding'
+    | '/seller/payments'
+    | '/seller/test-drives'
+    | '/seller/vehicles'
+    | '/admin/'
+    | '/buyer/'
     | '/cars/'
     | '/seller/'
+    | '/admin/account/$section'
+    | '/admin/advertising/$partnerId'
+    | '/admin/deals/$id'
+    | '/admin/integrations/$id'
+    | '/admin/settings/$tab'
+    | '/admin/users/$id'
+    | '/admin/vehicles/$id'
+    | '/auth/reset/$token'
+    | '/buyer/account/$section'
+    | '/buyer/deals/$dealId'
+    | '/buyer/inbox/$threadId'
+    | '/buyer/verification/$step'
+    | '/cars/$id/offer'
+    | '/seller/account/$section'
+    | '/seller/deals/$dealId'
+    | '/seller/inbox/$threadId'
+    | '/seller/onboarding/identity'
+    | '/seller/onboarding/payouts'
+    | '/seller/test-drives/availability'
+    | '/seller/vehicles/$id'
     | '/seller/vehicles/new'
+    | '/admin/account/'
+    | '/admin/advertising/'
+    | '/admin/deals/'
+    | '/admin/integrations/'
+    | '/admin/settings/'
+    | '/admin/users/'
+    | '/admin/vehicles/'
+    | '/buyer/account/'
+    | '/buyer/deals/'
+    | '/buyer/inbox/'
+    | '/buyer/verification/'
+    | '/cars/$id/'
+    | '/seller/account/'
+    | '/seller/deals/'
+    | '/seller/inbox/'
+    | '/seller/onboarding/'
+    | '/seller/test-drives/'
+    | '/seller/vehicles/'
+    | '/buyer/deals/$dealId/payoff'
+    | '/seller/deals/$dealId/default-options'
+    | '/seller/vehicles/$id/advertise'
+    | '/seller/vehicles/new/$step'
+    | '/buyer/deals/$dealId/'
+    | '/seller/deals/$dealId/'
+    | '/seller/vehicles/$id/'
+    | '/seller/vehicles/new/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
-  BuyerRoute: typeof BuyerRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
+  BuyerRoute: typeof BuyerRouteWithChildren
   LoginRoute: typeof LoginRoute
+  NoAccessRoute: typeof NoAccessRoute
   SellerRoute: typeof SellerRouteWithChildren
-  CarsIdRoute: typeof CarsIdRoute
+  SignupRoute: typeof SignupRoute
+  CarsIdRoute: typeof CarsIdRouteWithChildren
   DealsIdRoute: typeof DealsIdRoute
+  DemoInboxRoute: typeof DemoInboxRoute
+  DocsTokenRoute: typeof DocsTokenRoute
   CarsIndexRoute: typeof CarsIndexRoute
 }
 
@@ -172,6 +1214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer': {
       id: '/buyer'
       path: '/buyer'
@@ -186,12 +1235,243 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/no-access': {
+      id: '/no-access'
+      path: '/no-access'
+      fullPath: '/no-access'
+      preLoaderRoute: typeof NoAccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/seller': {
       id: '/seller'
       path: '/seller'
       fullPath: '/seller'
       preLoaderRoute: typeof SellerRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/account': {
+      id: '/admin/account'
+      path: '/account'
+      fullPath: '/admin/account'
+      preLoaderRoute: typeof AdminAccountRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/advertising': {
+      id: '/admin/advertising'
+      path: '/advertising'
+      fullPath: '/admin/advertising'
+      preLoaderRoute: typeof AdminAdvertisingRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/audit-log': {
+      id: '/admin/audit-log'
+      path: '/audit-log'
+      fullPath: '/admin/audit-log'
+      preLoaderRoute: typeof AdminAuditLogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/closed-deals': {
+      id: '/admin/closed-deals'
+      path: '/closed-deals'
+      fullPath: '/admin/closed-deals'
+      preLoaderRoute: typeof AdminClosedDealsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/deals': {
+      id: '/admin/deals'
+      path: '/deals'
+      fullPath: '/admin/deals'
+      preLoaderRoute: typeof AdminDealsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/integrations': {
+      id: '/admin/integrations'
+      path: '/integrations'
+      fullPath: '/admin/integrations'
+      preLoaderRoute: typeof AdminIntegrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/revenue': {
+      id: '/admin/revenue'
+      path: '/revenue'
+      fullPath: '/admin/revenue'
+      preLoaderRoute: typeof AdminRevenueRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/support': {
+      id: '/admin/support'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/test-drives': {
+      id: '/admin/test-drives'
+      path: '/test-drives'
+      fullPath: '/admin/test-drives'
+      preLoaderRoute: typeof AdminTestDrivesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/vehicles': {
+      id: '/admin/vehicles'
+      path: '/vehicles'
+      fullPath: '/admin/vehicles'
+      preLoaderRoute: typeof AdminVehiclesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/auth/2fa': {
+      id: '/auth/2fa'
+      path: '/2fa'
+      fullPath: '/auth/2fa'
+      preLoaderRoute: typeof Auth2faRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/forgot': {
+      id: '/auth/forgot'
+      path: '/forgot'
+      fullPath: '/auth/forgot'
+      preLoaderRoute: typeof AuthForgotRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/suspended': {
+      id: '/auth/suspended'
+      path: '/suspended'
+      fullPath: '/auth/suspended'
+      preLoaderRoute: typeof AuthSuspendedRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/buyer/': {
+      id: '/buyer/'
+      path: '/'
+      fullPath: '/buyer/'
+      preLoaderRoute: typeof BuyerIndexRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/account': {
+      id: '/buyer/account'
+      path: '/account'
+      fullPath: '/buyer/account'
+      preLoaderRoute: typeof BuyerAccountRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/deals': {
+      id: '/buyer/deals'
+      path: '/deals'
+      fullPath: '/buyer/deals'
+      preLoaderRoute: typeof BuyerDealsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/inbox': {
+      id: '/buyer/inbox'
+      path: '/inbox'
+      fullPath: '/buyer/inbox'
+      preLoaderRoute: typeof BuyerInboxRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/notifications': {
+      id: '/buyer/notifications'
+      path: '/notifications'
+      fullPath: '/buyer/notifications'
+      preLoaderRoute: typeof BuyerNotificationsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/payments': {
+      id: '/buyer/payments'
+      path: '/payments'
+      fullPath: '/buyer/payments'
+      preLoaderRoute: typeof BuyerPaymentsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/saved': {
+      id: '/buyer/saved'
+      path: '/saved'
+      fullPath: '/buyer/saved'
+      preLoaderRoute: typeof BuyerSavedRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/test-drives': {
+      id: '/buyer/test-drives'
+      path: '/test-drives'
+      fullPath: '/buyer/test-drives'
+      preLoaderRoute: typeof BuyerTestDrivesRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/verification': {
+      id: '/buyer/verification'
+      path: '/verification'
+      fullPath: '/buyer/verification'
+      preLoaderRoute: typeof BuyerVerificationRouteImport
+      parentRoute: typeof BuyerRoute
     }
     '/cars/': {
       id: '/cars/'
@@ -214,6 +1494,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/inbox': {
+      id: '/demo/inbox'
+      path: '/demo/inbox'
+      fullPath: '/demo/inbox'
+      preLoaderRoute: typeof DemoInboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/$token': {
+      id: '/docs/$token'
+      path: '/docs/$token'
+      fullPath: '/docs/$token'
+      preLoaderRoute: typeof DocsTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/seller/': {
       id: '/seller/'
       path: '/'
@@ -221,37 +1515,824 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerIndexRouteImport
       parentRoute: typeof SellerRoute
     }
+    '/seller/account': {
+      id: '/seller/account'
+      path: '/account'
+      fullPath: '/seller/account'
+      preLoaderRoute: typeof SellerAccountRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/deals': {
+      id: '/seller/deals'
+      path: '/deals'
+      fullPath: '/seller/deals'
+      preLoaderRoute: typeof SellerDealsRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/inbox': {
+      id: '/seller/inbox'
+      path: '/inbox'
+      fullPath: '/seller/inbox'
+      preLoaderRoute: typeof SellerInboxRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/notifications': {
+      id: '/seller/notifications'
+      path: '/notifications'
+      fullPath: '/seller/notifications'
+      preLoaderRoute: typeof SellerNotificationsRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/onboarding': {
+      id: '/seller/onboarding'
+      path: '/onboarding'
+      fullPath: '/seller/onboarding'
+      preLoaderRoute: typeof SellerOnboardingRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/payments': {
+      id: '/seller/payments'
+      path: '/payments'
+      fullPath: '/seller/payments'
+      preLoaderRoute: typeof SellerPaymentsRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/test-drives': {
+      id: '/seller/test-drives'
+      path: '/test-drives'
+      fullPath: '/seller/test-drives'
+      preLoaderRoute: typeof SellerTestDrivesRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/seller/vehicles': {
+      id: '/seller/vehicles'
+      path: '/vehicles'
+      fullPath: '/seller/vehicles'
+      preLoaderRoute: typeof SellerVehiclesRouteImport
+      parentRoute: typeof SellerRoute
+    }
+    '/admin/account/': {
+      id: '/admin/account/'
+      path: '/'
+      fullPath: '/admin/account/'
+      preLoaderRoute: typeof AdminAccountIndexRouteImport
+      parentRoute: typeof AdminAccountRoute
+    }
+    '/admin/account/$section': {
+      id: '/admin/account/$section'
+      path: '/$section'
+      fullPath: '/admin/account/$section'
+      preLoaderRoute: typeof AdminAccountSectionRouteImport
+      parentRoute: typeof AdminAccountRoute
+    }
+    '/admin/advertising/': {
+      id: '/admin/advertising/'
+      path: '/'
+      fullPath: '/admin/advertising/'
+      preLoaderRoute: typeof AdminAdvertisingIndexRouteImport
+      parentRoute: typeof AdminAdvertisingRoute
+    }
+    '/admin/advertising/$partnerId': {
+      id: '/admin/advertising/$partnerId'
+      path: '/$partnerId'
+      fullPath: '/admin/advertising/$partnerId'
+      preLoaderRoute: typeof AdminAdvertisingPartnerIdRouteImport
+      parentRoute: typeof AdminAdvertisingRoute
+    }
+    '/admin/deals/': {
+      id: '/admin/deals/'
+      path: '/'
+      fullPath: '/admin/deals/'
+      preLoaderRoute: typeof AdminDealsIndexRouteImport
+      parentRoute: typeof AdminDealsRoute
+    }
+    '/admin/deals/$id': {
+      id: '/admin/deals/$id'
+      path: '/$id'
+      fullPath: '/admin/deals/$id'
+      preLoaderRoute: typeof AdminDealsIdRouteImport
+      parentRoute: typeof AdminDealsRoute
+    }
+    '/admin/integrations/': {
+      id: '/admin/integrations/'
+      path: '/'
+      fullPath: '/admin/integrations/'
+      preLoaderRoute: typeof AdminIntegrationsIndexRouteImport
+      parentRoute: typeof AdminIntegrationsRoute
+    }
+    '/admin/integrations/$id': {
+      id: '/admin/integrations/$id'
+      path: '/$id'
+      fullPath: '/admin/integrations/$id'
+      preLoaderRoute: typeof AdminIntegrationsIdRouteImport
+      parentRoute: typeof AdminIntegrationsRoute
+    }
+    '/admin/settings/': {
+      id: '/admin/settings/'
+      path: '/'
+      fullPath: '/admin/settings/'
+      preLoaderRoute: typeof AdminSettingsIndexRouteImport
+      parentRoute: typeof AdminSettingsRoute
+    }
+    '/admin/settings/$tab': {
+      id: '/admin/settings/$tab'
+      path: '/$tab'
+      fullPath: '/admin/settings/$tab'
+      preLoaderRoute: typeof AdminSettingsTabRouteImport
+      parentRoute: typeof AdminSettingsRoute
+    }
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
+    '/admin/users/$id': {
+      id: '/admin/users/$id'
+      path: '/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminUsersIdRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
+    '/admin/vehicles/': {
+      id: '/admin/vehicles/'
+      path: '/'
+      fullPath: '/admin/vehicles/'
+      preLoaderRoute: typeof AdminVehiclesIndexRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/$id': {
+      id: '/admin/vehicles/$id'
+      path: '/$id'
+      fullPath: '/admin/vehicles/$id'
+      preLoaderRoute: typeof AdminVehiclesIdRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/auth/reset/$token': {
+      id: '/auth/reset/$token'
+      path: '/reset/$token'
+      fullPath: '/auth/reset/$token'
+      preLoaderRoute: typeof AuthResetTokenRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/buyer/account/': {
+      id: '/buyer/account/'
+      path: '/'
+      fullPath: '/buyer/account/'
+      preLoaderRoute: typeof BuyerAccountIndexRouteImport
+      parentRoute: typeof BuyerAccountRoute
+    }
+    '/buyer/account/$section': {
+      id: '/buyer/account/$section'
+      path: '/$section'
+      fullPath: '/buyer/account/$section'
+      preLoaderRoute: typeof BuyerAccountSectionRouteImport
+      parentRoute: typeof BuyerAccountRoute
+    }
+    '/buyer/deals/': {
+      id: '/buyer/deals/'
+      path: '/'
+      fullPath: '/buyer/deals/'
+      preLoaderRoute: typeof BuyerDealsIndexRouteImport
+      parentRoute: typeof BuyerDealsRoute
+    }
+    '/buyer/deals/$dealId': {
+      id: '/buyer/deals/$dealId'
+      path: '/$dealId'
+      fullPath: '/buyer/deals/$dealId'
+      preLoaderRoute: typeof BuyerDealsDealIdRouteImport
+      parentRoute: typeof BuyerDealsRoute
+    }
+    '/buyer/inbox/': {
+      id: '/buyer/inbox/'
+      path: '/'
+      fullPath: '/buyer/inbox/'
+      preLoaderRoute: typeof BuyerInboxIndexRouteImport
+      parentRoute: typeof BuyerInboxRoute
+    }
+    '/buyer/inbox/$threadId': {
+      id: '/buyer/inbox/$threadId'
+      path: '/$threadId'
+      fullPath: '/buyer/inbox/$threadId'
+      preLoaderRoute: typeof BuyerInboxThreadIdRouteImport
+      parentRoute: typeof BuyerInboxRoute
+    }
+    '/buyer/verification/': {
+      id: '/buyer/verification/'
+      path: '/'
+      fullPath: '/buyer/verification/'
+      preLoaderRoute: typeof BuyerVerificationIndexRouteImport
+      parentRoute: typeof BuyerVerificationRoute
+    }
+    '/buyer/verification/$step': {
+      id: '/buyer/verification/$step'
+      path: '/$step'
+      fullPath: '/buyer/verification/$step'
+      preLoaderRoute: typeof BuyerVerificationStepRouteImport
+      parentRoute: typeof BuyerVerificationRoute
+    }
+    '/cars/$id/': {
+      id: '/cars/$id/'
+      path: '/'
+      fullPath: '/cars/$id/'
+      preLoaderRoute: typeof CarsIdIndexRouteImport
+      parentRoute: typeof CarsIdRoute
+    }
+    '/cars/$id/offer': {
+      id: '/cars/$id/offer'
+      path: '/offer'
+      fullPath: '/cars/$id/offer'
+      preLoaderRoute: typeof CarsIdOfferRouteImport
+      parentRoute: typeof CarsIdRoute
+    }
+    '/seller/account/': {
+      id: '/seller/account/'
+      path: '/'
+      fullPath: '/seller/account/'
+      preLoaderRoute: typeof SellerAccountIndexRouteImport
+      parentRoute: typeof SellerAccountRoute
+    }
+    '/seller/account/$section': {
+      id: '/seller/account/$section'
+      path: '/$section'
+      fullPath: '/seller/account/$section'
+      preLoaderRoute: typeof SellerAccountSectionRouteImport
+      parentRoute: typeof SellerAccountRoute
+    }
+    '/seller/deals/': {
+      id: '/seller/deals/'
+      path: '/'
+      fullPath: '/seller/deals/'
+      preLoaderRoute: typeof SellerDealsIndexRouteImport
+      parentRoute: typeof SellerDealsRoute
+    }
+    '/seller/deals/$dealId': {
+      id: '/seller/deals/$dealId'
+      path: '/$dealId'
+      fullPath: '/seller/deals/$dealId'
+      preLoaderRoute: typeof SellerDealsDealIdRouteImport
+      parentRoute: typeof SellerDealsRoute
+    }
+    '/seller/inbox/': {
+      id: '/seller/inbox/'
+      path: '/'
+      fullPath: '/seller/inbox/'
+      preLoaderRoute: typeof SellerInboxIndexRouteImport
+      parentRoute: typeof SellerInboxRoute
+    }
+    '/seller/inbox/$threadId': {
+      id: '/seller/inbox/$threadId'
+      path: '/$threadId'
+      fullPath: '/seller/inbox/$threadId'
+      preLoaderRoute: typeof SellerInboxThreadIdRouteImport
+      parentRoute: typeof SellerInboxRoute
+    }
+    '/seller/onboarding/': {
+      id: '/seller/onboarding/'
+      path: '/'
+      fullPath: '/seller/onboarding/'
+      preLoaderRoute: typeof SellerOnboardingIndexRouteImport
+      parentRoute: typeof SellerOnboardingRoute
+    }
+    '/seller/onboarding/identity': {
+      id: '/seller/onboarding/identity'
+      path: '/identity'
+      fullPath: '/seller/onboarding/identity'
+      preLoaderRoute: typeof SellerOnboardingIdentityRouteImport
+      parentRoute: typeof SellerOnboardingRoute
+    }
+    '/seller/onboarding/payouts': {
+      id: '/seller/onboarding/payouts'
+      path: '/payouts'
+      fullPath: '/seller/onboarding/payouts'
+      preLoaderRoute: typeof SellerOnboardingPayoutsRouteImport
+      parentRoute: typeof SellerOnboardingRoute
+    }
+    '/seller/test-drives/': {
+      id: '/seller/test-drives/'
+      path: '/'
+      fullPath: '/seller/test-drives/'
+      preLoaderRoute: typeof SellerTestDrivesIndexRouteImport
+      parentRoute: typeof SellerTestDrivesRoute
+    }
+    '/seller/test-drives/availability': {
+      id: '/seller/test-drives/availability'
+      path: '/availability'
+      fullPath: '/seller/test-drives/availability'
+      preLoaderRoute: typeof SellerTestDrivesAvailabilityRouteImport
+      parentRoute: typeof SellerTestDrivesRoute
+    }
+    '/seller/vehicles/': {
+      id: '/seller/vehicles/'
+      path: '/'
+      fullPath: '/seller/vehicles/'
+      preLoaderRoute: typeof SellerVehiclesIndexRouteImport
+      parentRoute: typeof SellerVehiclesRoute
+    }
+    '/seller/vehicles/$id': {
+      id: '/seller/vehicles/$id'
+      path: '/$id'
+      fullPath: '/seller/vehicles/$id'
+      preLoaderRoute: typeof SellerVehiclesIdRouteImport
+      parentRoute: typeof SellerVehiclesRoute
+    }
     '/seller/vehicles/new': {
       id: '/seller/vehicles/new'
-      path: '/vehicles/new'
+      path: '/new'
       fullPath: '/seller/vehicles/new'
       preLoaderRoute: typeof SellerVehiclesNewRouteImport
-      parentRoute: typeof SellerRoute
+      parentRoute: typeof SellerVehiclesRoute
+    }
+    '/buyer/deals/$dealId/': {
+      id: '/buyer/deals/$dealId/'
+      path: '/'
+      fullPath: '/buyer/deals/$dealId/'
+      preLoaderRoute: typeof BuyerDealsDealIdIndexRouteImport
+      parentRoute: typeof BuyerDealsDealIdRoute
+    }
+    '/buyer/deals/$dealId/payoff': {
+      id: '/buyer/deals/$dealId/payoff'
+      path: '/payoff'
+      fullPath: '/buyer/deals/$dealId/payoff'
+      preLoaderRoute: typeof BuyerDealsDealIdPayoffRouteImport
+      parentRoute: typeof BuyerDealsDealIdRoute
+    }
+    '/seller/deals/$dealId/': {
+      id: '/seller/deals/$dealId/'
+      path: '/'
+      fullPath: '/seller/deals/$dealId/'
+      preLoaderRoute: typeof SellerDealsDealIdIndexRouteImport
+      parentRoute: typeof SellerDealsDealIdRoute
+    }
+    '/seller/deals/$dealId/default-options': {
+      id: '/seller/deals/$dealId/default-options'
+      path: '/default-options'
+      fullPath: '/seller/deals/$dealId/default-options'
+      preLoaderRoute: typeof SellerDealsDealIdDefaultOptionsRouteImport
+      parentRoute: typeof SellerDealsDealIdRoute
+    }
+    '/seller/vehicles/$id/': {
+      id: '/seller/vehicles/$id/'
+      path: '/'
+      fullPath: '/seller/vehicles/$id/'
+      preLoaderRoute: typeof SellerVehiclesIdIndexRouteImport
+      parentRoute: typeof SellerVehiclesIdRoute
+    }
+    '/seller/vehicles/$id/advertise': {
+      id: '/seller/vehicles/$id/advertise'
+      path: '/advertise'
+      fullPath: '/seller/vehicles/$id/advertise'
+      preLoaderRoute: typeof SellerVehiclesIdAdvertiseRouteImport
+      parentRoute: typeof SellerVehiclesIdRoute
+    }
+    '/seller/vehicles/new/': {
+      id: '/seller/vehicles/new/'
+      path: '/'
+      fullPath: '/seller/vehicles/new/'
+      preLoaderRoute: typeof SellerVehiclesNewIndexRouteImport
+      parentRoute: typeof SellerVehiclesNewRoute
+    }
+    '/seller/vehicles/new/$step': {
+      id: '/seller/vehicles/new/$step'
+      path: '/$step'
+      fullPath: '/seller/vehicles/new/$step'
+      preLoaderRoute: typeof SellerVehiclesNewStepRouteImport
+      parentRoute: typeof SellerVehiclesNewRoute
     }
   }
 }
 
+interface AdminAccountRouteChildren {
+  AdminAccountSectionRoute: typeof AdminAccountSectionRoute
+  AdminAccountIndexRoute: typeof AdminAccountIndexRoute
+}
+
+const AdminAccountRouteChildren: AdminAccountRouteChildren = {
+  AdminAccountSectionRoute: AdminAccountSectionRoute,
+  AdminAccountIndexRoute: AdminAccountIndexRoute,
+}
+
+const AdminAccountRouteWithChildren = AdminAccountRoute._addFileChildren(
+  AdminAccountRouteChildren,
+)
+
+interface AdminAdvertisingRouteChildren {
+  AdminAdvertisingPartnerIdRoute: typeof AdminAdvertisingPartnerIdRoute
+  AdminAdvertisingIndexRoute: typeof AdminAdvertisingIndexRoute
+}
+
+const AdminAdvertisingRouteChildren: AdminAdvertisingRouteChildren = {
+  AdminAdvertisingPartnerIdRoute: AdminAdvertisingPartnerIdRoute,
+  AdminAdvertisingIndexRoute: AdminAdvertisingIndexRoute,
+}
+
+const AdminAdvertisingRouteWithChildren =
+  AdminAdvertisingRoute._addFileChildren(AdminAdvertisingRouteChildren)
+
+interface AdminDealsRouteChildren {
+  AdminDealsIdRoute: typeof AdminDealsIdRoute
+  AdminDealsIndexRoute: typeof AdminDealsIndexRoute
+}
+
+const AdminDealsRouteChildren: AdminDealsRouteChildren = {
+  AdminDealsIdRoute: AdminDealsIdRoute,
+  AdminDealsIndexRoute: AdminDealsIndexRoute,
+}
+
+const AdminDealsRouteWithChildren = AdminDealsRoute._addFileChildren(
+  AdminDealsRouteChildren,
+)
+
+interface AdminIntegrationsRouteChildren {
+  AdminIntegrationsIdRoute: typeof AdminIntegrationsIdRoute
+  AdminIntegrationsIndexRoute: typeof AdminIntegrationsIndexRoute
+}
+
+const AdminIntegrationsRouteChildren: AdminIntegrationsRouteChildren = {
+  AdminIntegrationsIdRoute: AdminIntegrationsIdRoute,
+  AdminIntegrationsIndexRoute: AdminIntegrationsIndexRoute,
+}
+
+const AdminIntegrationsRouteWithChildren =
+  AdminIntegrationsRoute._addFileChildren(AdminIntegrationsRouteChildren)
+
+interface AdminSettingsRouteChildren {
+  AdminSettingsTabRoute: typeof AdminSettingsTabRoute
+  AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
+}
+
+const AdminSettingsRouteChildren: AdminSettingsRouteChildren = {
+  AdminSettingsTabRoute: AdminSettingsTabRoute,
+  AdminSettingsIndexRoute: AdminSettingsIndexRoute,
+}
+
+const AdminSettingsRouteWithChildren = AdminSettingsRoute._addFileChildren(
+  AdminSettingsRouteChildren,
+)
+
+interface AdminUsersRouteChildren {
+  AdminUsersIdRoute: typeof AdminUsersIdRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+}
+
+const AdminUsersRouteChildren: AdminUsersRouteChildren = {
+  AdminUsersIdRoute: AdminUsersIdRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+}
+
+const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
+  AdminUsersRouteChildren,
+)
+
+interface AdminVehiclesRouteChildren {
+  AdminVehiclesIdRoute: typeof AdminVehiclesIdRoute
+  AdminVehiclesIndexRoute: typeof AdminVehiclesIndexRoute
+}
+
+const AdminVehiclesRouteChildren: AdminVehiclesRouteChildren = {
+  AdminVehiclesIdRoute: AdminVehiclesIdRoute,
+  AdminVehiclesIndexRoute: AdminVehiclesIndexRoute,
+}
+
+const AdminVehiclesRouteWithChildren = AdminVehiclesRoute._addFileChildren(
+  AdminVehiclesRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminAccountRoute: typeof AdminAccountRouteWithChildren
+  AdminAdvertisingRoute: typeof AdminAdvertisingRouteWithChildren
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminClosedDealsRoute: typeof AdminClosedDealsRoute
+  AdminDealsRoute: typeof AdminDealsRouteWithChildren
+  AdminIntegrationsRoute: typeof AdminIntegrationsRouteWithChildren
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminRevenueRoute: typeof AdminRevenueRoute
+  AdminSettingsRoute: typeof AdminSettingsRouteWithChildren
+  AdminSupportRoute: typeof AdminSupportRoute
+  AdminTestDrivesRoute: typeof AdminTestDrivesRoute
+  AdminUsersRoute: typeof AdminUsersRouteWithChildren
+  AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
+  AdminVerificationsRoute: typeof AdminVerificationsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAccountRoute: AdminAccountRouteWithChildren,
+  AdminAdvertisingRoute: AdminAdvertisingRouteWithChildren,
+  AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminClosedDealsRoute: AdminClosedDealsRoute,
+  AdminDealsRoute: AdminDealsRouteWithChildren,
+  AdminIntegrationsRoute: AdminIntegrationsRouteWithChildren,
+  AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminRevenueRoute: AdminRevenueRoute,
+  AdminSettingsRoute: AdminSettingsRouteWithChildren,
+  AdminSupportRoute: AdminSupportRoute,
+  AdminTestDrivesRoute: AdminTestDrivesRoute,
+  AdminUsersRoute: AdminUsersRouteWithChildren,
+  AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
+  AdminVerificationsRoute: AdminVerificationsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface AuthRouteChildren {
+  Auth2faRoute: typeof Auth2faRoute
+  AuthForgotRoute: typeof AuthForgotRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+  AuthSuspendedRoute: typeof AuthSuspendedRoute
+  AuthVerifyRoute: typeof AuthVerifyRoute
+  AuthResetTokenRoute: typeof AuthResetTokenRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  Auth2faRoute: Auth2faRoute,
+  AuthForgotRoute: AuthForgotRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthSignupRoute: AuthSignupRoute,
+  AuthSuspendedRoute: AuthSuspendedRoute,
+  AuthVerifyRoute: AuthVerifyRoute,
+  AuthResetTokenRoute: AuthResetTokenRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface BuyerAccountRouteChildren {
+  BuyerAccountSectionRoute: typeof BuyerAccountSectionRoute
+  BuyerAccountIndexRoute: typeof BuyerAccountIndexRoute
+}
+
+const BuyerAccountRouteChildren: BuyerAccountRouteChildren = {
+  BuyerAccountSectionRoute: BuyerAccountSectionRoute,
+  BuyerAccountIndexRoute: BuyerAccountIndexRoute,
+}
+
+const BuyerAccountRouteWithChildren = BuyerAccountRoute._addFileChildren(
+  BuyerAccountRouteChildren,
+)
+
+interface BuyerDealsDealIdRouteChildren {
+  BuyerDealsDealIdPayoffRoute: typeof BuyerDealsDealIdPayoffRoute
+  BuyerDealsDealIdIndexRoute: typeof BuyerDealsDealIdIndexRoute
+}
+
+const BuyerDealsDealIdRouteChildren: BuyerDealsDealIdRouteChildren = {
+  BuyerDealsDealIdPayoffRoute: BuyerDealsDealIdPayoffRoute,
+  BuyerDealsDealIdIndexRoute: BuyerDealsDealIdIndexRoute,
+}
+
+const BuyerDealsDealIdRouteWithChildren =
+  BuyerDealsDealIdRoute._addFileChildren(BuyerDealsDealIdRouteChildren)
+
+interface BuyerDealsRouteChildren {
+  BuyerDealsDealIdRoute: typeof BuyerDealsDealIdRouteWithChildren
+  BuyerDealsIndexRoute: typeof BuyerDealsIndexRoute
+}
+
+const BuyerDealsRouteChildren: BuyerDealsRouteChildren = {
+  BuyerDealsDealIdRoute: BuyerDealsDealIdRouteWithChildren,
+  BuyerDealsIndexRoute: BuyerDealsIndexRoute,
+}
+
+const BuyerDealsRouteWithChildren = BuyerDealsRoute._addFileChildren(
+  BuyerDealsRouteChildren,
+)
+
+interface BuyerInboxRouteChildren {
+  BuyerInboxThreadIdRoute: typeof BuyerInboxThreadIdRoute
+  BuyerInboxIndexRoute: typeof BuyerInboxIndexRoute
+}
+
+const BuyerInboxRouteChildren: BuyerInboxRouteChildren = {
+  BuyerInboxThreadIdRoute: BuyerInboxThreadIdRoute,
+  BuyerInboxIndexRoute: BuyerInboxIndexRoute,
+}
+
+const BuyerInboxRouteWithChildren = BuyerInboxRoute._addFileChildren(
+  BuyerInboxRouteChildren,
+)
+
+interface BuyerVerificationRouteChildren {
+  BuyerVerificationStepRoute: typeof BuyerVerificationStepRoute
+  BuyerVerificationIndexRoute: typeof BuyerVerificationIndexRoute
+}
+
+const BuyerVerificationRouteChildren: BuyerVerificationRouteChildren = {
+  BuyerVerificationStepRoute: BuyerVerificationStepRoute,
+  BuyerVerificationIndexRoute: BuyerVerificationIndexRoute,
+}
+
+const BuyerVerificationRouteWithChildren =
+  BuyerVerificationRoute._addFileChildren(BuyerVerificationRouteChildren)
+
+interface BuyerRouteChildren {
+  BuyerAccountRoute: typeof BuyerAccountRouteWithChildren
+  BuyerDealsRoute: typeof BuyerDealsRouteWithChildren
+  BuyerInboxRoute: typeof BuyerInboxRouteWithChildren
+  BuyerNotificationsRoute: typeof BuyerNotificationsRoute
+  BuyerPaymentsRoute: typeof BuyerPaymentsRoute
+  BuyerSavedRoute: typeof BuyerSavedRoute
+  BuyerTestDrivesRoute: typeof BuyerTestDrivesRoute
+  BuyerVerificationRoute: typeof BuyerVerificationRouteWithChildren
+  BuyerIndexRoute: typeof BuyerIndexRoute
+}
+
+const BuyerRouteChildren: BuyerRouteChildren = {
+  BuyerAccountRoute: BuyerAccountRouteWithChildren,
+  BuyerDealsRoute: BuyerDealsRouteWithChildren,
+  BuyerInboxRoute: BuyerInboxRouteWithChildren,
+  BuyerNotificationsRoute: BuyerNotificationsRoute,
+  BuyerPaymentsRoute: BuyerPaymentsRoute,
+  BuyerSavedRoute: BuyerSavedRoute,
+  BuyerTestDrivesRoute: BuyerTestDrivesRoute,
+  BuyerVerificationRoute: BuyerVerificationRouteWithChildren,
+  BuyerIndexRoute: BuyerIndexRoute,
+}
+
+const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
+
+interface SellerAccountRouteChildren {
+  SellerAccountSectionRoute: typeof SellerAccountSectionRoute
+  SellerAccountIndexRoute: typeof SellerAccountIndexRoute
+}
+
+const SellerAccountRouteChildren: SellerAccountRouteChildren = {
+  SellerAccountSectionRoute: SellerAccountSectionRoute,
+  SellerAccountIndexRoute: SellerAccountIndexRoute,
+}
+
+const SellerAccountRouteWithChildren = SellerAccountRoute._addFileChildren(
+  SellerAccountRouteChildren,
+)
+
+interface SellerDealsDealIdRouteChildren {
+  SellerDealsDealIdDefaultOptionsRoute: typeof SellerDealsDealIdDefaultOptionsRoute
+  SellerDealsDealIdIndexRoute: typeof SellerDealsDealIdIndexRoute
+}
+
+const SellerDealsDealIdRouteChildren: SellerDealsDealIdRouteChildren = {
+  SellerDealsDealIdDefaultOptionsRoute: SellerDealsDealIdDefaultOptionsRoute,
+  SellerDealsDealIdIndexRoute: SellerDealsDealIdIndexRoute,
+}
+
+const SellerDealsDealIdRouteWithChildren =
+  SellerDealsDealIdRoute._addFileChildren(SellerDealsDealIdRouteChildren)
+
+interface SellerDealsRouteChildren {
+  SellerDealsDealIdRoute: typeof SellerDealsDealIdRouteWithChildren
+  SellerDealsIndexRoute: typeof SellerDealsIndexRoute
+}
+
+const SellerDealsRouteChildren: SellerDealsRouteChildren = {
+  SellerDealsDealIdRoute: SellerDealsDealIdRouteWithChildren,
+  SellerDealsIndexRoute: SellerDealsIndexRoute,
+}
+
+const SellerDealsRouteWithChildren = SellerDealsRoute._addFileChildren(
+  SellerDealsRouteChildren,
+)
+
+interface SellerInboxRouteChildren {
+  SellerInboxThreadIdRoute: typeof SellerInboxThreadIdRoute
+  SellerInboxIndexRoute: typeof SellerInboxIndexRoute
+}
+
+const SellerInboxRouteChildren: SellerInboxRouteChildren = {
+  SellerInboxThreadIdRoute: SellerInboxThreadIdRoute,
+  SellerInboxIndexRoute: SellerInboxIndexRoute,
+}
+
+const SellerInboxRouteWithChildren = SellerInboxRoute._addFileChildren(
+  SellerInboxRouteChildren,
+)
+
+interface SellerOnboardingRouteChildren {
+  SellerOnboardingIdentityRoute: typeof SellerOnboardingIdentityRoute
+  SellerOnboardingPayoutsRoute: typeof SellerOnboardingPayoutsRoute
+  SellerOnboardingIndexRoute: typeof SellerOnboardingIndexRoute
+}
+
+const SellerOnboardingRouteChildren: SellerOnboardingRouteChildren = {
+  SellerOnboardingIdentityRoute: SellerOnboardingIdentityRoute,
+  SellerOnboardingPayoutsRoute: SellerOnboardingPayoutsRoute,
+  SellerOnboardingIndexRoute: SellerOnboardingIndexRoute,
+}
+
+const SellerOnboardingRouteWithChildren =
+  SellerOnboardingRoute._addFileChildren(SellerOnboardingRouteChildren)
+
+interface SellerTestDrivesRouteChildren {
+  SellerTestDrivesAvailabilityRoute: typeof SellerTestDrivesAvailabilityRoute
+  SellerTestDrivesIndexRoute: typeof SellerTestDrivesIndexRoute
+}
+
+const SellerTestDrivesRouteChildren: SellerTestDrivesRouteChildren = {
+  SellerTestDrivesAvailabilityRoute: SellerTestDrivesAvailabilityRoute,
+  SellerTestDrivesIndexRoute: SellerTestDrivesIndexRoute,
+}
+
+const SellerTestDrivesRouteWithChildren =
+  SellerTestDrivesRoute._addFileChildren(SellerTestDrivesRouteChildren)
+
+interface SellerVehiclesIdRouteChildren {
+  SellerVehiclesIdAdvertiseRoute: typeof SellerVehiclesIdAdvertiseRoute
+  SellerVehiclesIdIndexRoute: typeof SellerVehiclesIdIndexRoute
+}
+
+const SellerVehiclesIdRouteChildren: SellerVehiclesIdRouteChildren = {
+  SellerVehiclesIdAdvertiseRoute: SellerVehiclesIdAdvertiseRoute,
+  SellerVehiclesIdIndexRoute: SellerVehiclesIdIndexRoute,
+}
+
+const SellerVehiclesIdRouteWithChildren =
+  SellerVehiclesIdRoute._addFileChildren(SellerVehiclesIdRouteChildren)
+
+interface SellerVehiclesNewRouteChildren {
+  SellerVehiclesNewStepRoute: typeof SellerVehiclesNewStepRoute
+  SellerVehiclesNewIndexRoute: typeof SellerVehiclesNewIndexRoute
+}
+
+const SellerVehiclesNewRouteChildren: SellerVehiclesNewRouteChildren = {
+  SellerVehiclesNewStepRoute: SellerVehiclesNewStepRoute,
+  SellerVehiclesNewIndexRoute: SellerVehiclesNewIndexRoute,
+}
+
+const SellerVehiclesNewRouteWithChildren =
+  SellerVehiclesNewRoute._addFileChildren(SellerVehiclesNewRouteChildren)
+
+interface SellerVehiclesRouteChildren {
+  SellerVehiclesIdRoute: typeof SellerVehiclesIdRouteWithChildren
+  SellerVehiclesNewRoute: typeof SellerVehiclesNewRouteWithChildren
+  SellerVehiclesIndexRoute: typeof SellerVehiclesIndexRoute
+}
+
+const SellerVehiclesRouteChildren: SellerVehiclesRouteChildren = {
+  SellerVehiclesIdRoute: SellerVehiclesIdRouteWithChildren,
+  SellerVehiclesNewRoute: SellerVehiclesNewRouteWithChildren,
+  SellerVehiclesIndexRoute: SellerVehiclesIndexRoute,
+}
+
+const SellerVehiclesRouteWithChildren = SellerVehiclesRoute._addFileChildren(
+  SellerVehiclesRouteChildren,
+)
+
 interface SellerRouteChildren {
+  SellerAccountRoute: typeof SellerAccountRouteWithChildren
+  SellerDealsRoute: typeof SellerDealsRouteWithChildren
+  SellerInboxRoute: typeof SellerInboxRouteWithChildren
+  SellerNotificationsRoute: typeof SellerNotificationsRoute
+  SellerOnboardingRoute: typeof SellerOnboardingRouteWithChildren
+  SellerPaymentsRoute: typeof SellerPaymentsRoute
+  SellerTestDrivesRoute: typeof SellerTestDrivesRouteWithChildren
+  SellerVehiclesRoute: typeof SellerVehiclesRouteWithChildren
   SellerIndexRoute: typeof SellerIndexRoute
-  SellerVehiclesNewRoute: typeof SellerVehiclesNewRoute
 }
 
 const SellerRouteChildren: SellerRouteChildren = {
+  SellerAccountRoute: SellerAccountRouteWithChildren,
+  SellerDealsRoute: SellerDealsRouteWithChildren,
+  SellerInboxRoute: SellerInboxRouteWithChildren,
+  SellerNotificationsRoute: SellerNotificationsRoute,
+  SellerOnboardingRoute: SellerOnboardingRouteWithChildren,
+  SellerPaymentsRoute: SellerPaymentsRoute,
+  SellerTestDrivesRoute: SellerTestDrivesRouteWithChildren,
+  SellerVehiclesRoute: SellerVehiclesRouteWithChildren,
   SellerIndexRoute: SellerIndexRoute,
-  SellerVehiclesNewRoute: SellerVehiclesNewRoute,
 }
 
 const SellerRouteWithChildren =
   SellerRoute._addFileChildren(SellerRouteChildren)
 
+interface CarsIdRouteChildren {
+  CarsIdOfferRoute: typeof CarsIdOfferRoute
+  CarsIdIndexRoute: typeof CarsIdIndexRoute
+}
+
+const CarsIdRouteChildren: CarsIdRouteChildren = {
+  CarsIdOfferRoute: CarsIdOfferRoute,
+  CarsIdIndexRoute: CarsIdIndexRoute,
+}
+
+const CarsIdRouteWithChildren =
+  CarsIdRoute._addFileChildren(CarsIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
-  BuyerRoute: BuyerRoute,
+  AdminRoute: AdminRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
+  BuyerRoute: BuyerRouteWithChildren,
   LoginRoute: LoginRoute,
+  NoAccessRoute: NoAccessRoute,
   SellerRoute: SellerRouteWithChildren,
-  CarsIdRoute: CarsIdRoute,
+  SignupRoute: SignupRoute,
+  CarsIdRoute: CarsIdRouteWithChildren,
   DealsIdRoute: DealsIdRoute,
+  DemoInboxRoute: DemoInboxRoute,
+  DocsTokenRoute: DocsTokenRoute,
   CarsIndexRoute: CarsIndexRoute,
 }
 export const routeTree = rootRouteImport
